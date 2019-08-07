@@ -21,4 +21,4 @@ def last_v1():
 def get_v1(date):
     if date not in vfr_manual_data:
         return "Not found", 404
-    return send_file(vfr_manual_data.path(date), mimetype="application/pdf")
+    return send_file(vfr_manual_data.path(date), as_attachment=True)

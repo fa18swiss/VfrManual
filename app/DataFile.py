@@ -18,8 +18,7 @@ class DataFile:
         self.__extension = extension
         self.__delta = delta
         self.__file = os.path.join(self.__dir, "_.json")
-        if not os.path.exists(self.__dir):
-            os.mkdir(self.__dir)
+        os.makedirs(self.__dir, exist_ok=True)
         if os.path.isfile(self.__file):
             with open(self.__file, 'r') as f:
                 content = json.load(f)

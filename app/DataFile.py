@@ -1,22 +1,25 @@
 import datetime
+import logging
 import os
 import os.path
 import json
 
 
 class DataFile:
+    delta: datetime.timedelta
     __dir: str
     __extension: str
-    __delta: datetime.timedelta
-    __last_check = datetime.datetime
     __items: list
+    __last_check: datetime.datetime
+    __logger: logging.Logger
 
     def __init__(self, directory, delta=None, extension=".pdf"):
         if delta is None:
-            delta = datetime.timedelta(seconds=5)
+            delta = datetime.timedelta(hours=1)
+        self.__logger = logging.getLogger(__name__)
         self.__dir = directory
         self.__extension = extension
-        self.__delta = delta
+        self.delta = delta
         self.__file = os.path.join(self.__dir, "_.json")
         os.makedirs(self.__dir, exist_ok=True)
         if os.path.isfile(self.__file):
@@ -64,4 +67,5 @@ class DataFile:
     def need_update(self):
         if self.__last_check is None:
             return True
-        return self.__last_check + self.__delta < datetime.datetime.now()
+        self.__logger.debug("Delta is %s", self.delta)
+        return self.__last_check + self.delta < datetime.datetime.now()

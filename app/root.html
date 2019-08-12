@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vfr Manual</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      function check() {
+        "use strict";
+
+        if (!('serviceWorker' in navigator)) return "No serviceWorker";
+        if (!('indexedDB' in window)) return "No indexedDB";
+        if (!('URL' in window)) return "No URL";
+
+        if (typeof Symbol == "undefined") return "Not ES6 (Symbol)";
+        try {
+          eval("class Foo {}");
+          eval("var bar = (x) => x+1");
+        } catch (e) { return "Not ES6 (eval)"; }
+
+        return null;
+      }
+      var res = check();
+      if (res != null) {
+        alert("Navigator is too old ! " + res)
+      } else {
+        //navigator.serviceWorker.register('static/sw.js');
+      }
+    </script>
+    <script src="static/app.js"></script>
+  </head>
+  <body>
+  <button id="cmdRefresh">Refresh</button>
+  <span id="lastCheck"></span>
+  <div id="dest"></div>
+  </body>
+</html>

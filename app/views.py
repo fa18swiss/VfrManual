@@ -1,11 +1,15 @@
+import os.path
 from app import app
 from .Data import *
 from flask import jsonify, send_file
 
+__app = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__))))
+__root = os.path.join(__app, "root.html")
+
 
 @app.route("/")
 def index():
-    return "Ready", 200, {"Content-Type": "text/plain"}
+    return send_file(__root)
 
 
 @app.route("/v1/vfrmanual/last")

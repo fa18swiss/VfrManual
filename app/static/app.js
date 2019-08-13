@@ -37,23 +37,33 @@ function app() {
     function checkLast(e) {
         if (e) e.preventDefault();
         get("/v1/vfrmanual/last", function (res) {
+            for(var i = 0 ; i < res.Langs.length ; i++) {
+                downloadIfNeeded(res.Last, res.Langs[i]);
+            }
             write(VftTable).put(res.LastCheck, LastCheck);
             loadLast();
-            read(VftTable).count(res.Last).onsuccess = function (event) {
-                if (event.target.result <= 0) {
-                    get("/v1/vfrmanual/get/" + res.Last, function (file) {
-                        write(VftTable).put(file, res.Last);
-                        loadAll();
-                    }, 'blob');
-                }
-            };
+
         }, "json")
+    }
+
+    function downloadIfNeeded(date, lang) {
+        console.log("date, lang", date, lang)
+        const key = date + "_" + lang;
+        read(VftTable).count(key).onsuccess = function (event) {
+            if (event.target.result <= 0) {
+                get("/v1/vfrmanual/get/" + date + "/" + lang, function (file) {
+                    write(VftTable).put(file, key);
+                    loadAll();
+                }, 'blob');
+            }
+        };
     }
 
     function readAndCreateLink(key, parent) {
         const downloadLink = document.createElement('a');
         const content = document.createElement("h2");
-        content.textContent = new Date(key).toLocaleDateString();
+        const tab = key.split("_");
+        content.textContent = new Date(tab[0]).toLocaleDateString() + " " + tab[1].toUpperCase();
         downloadLink.appendChild(content);
         read(VftTable).get(key).onsuccess = res => {
             downloadLink.href = window.URL.createObjectURL(res.target.result);
@@ -74,8 +84,9 @@ function app() {
             const parent = document.getElementById("dest");
             parent.innerHTML = "";
             for (let i = 0; i < keys.length; i++) {
-                if (keys[i] !== LastCheck) {
-                    readAndCreateLink(keys[i], parent)
+                let key = keys[i];
+                if (key !== LastCheck && key.indexOf("_") >= 0) {
+                    readAndCreateLink(key, parent)
                 }
 
             }

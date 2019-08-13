@@ -15,14 +15,18 @@ def index():
 @app.route("/v1/vfrmanual/last")
 def last_v1():
     vfr_manual.check()
+    last = vfr_manual_data.last()
     return jsonify({
         "LastCheck": vfr_manual_data.last_check(),
-        "Last": vfr_manual_data.last()
+        "Last": last[0],
+        "Langs": last[1],
     })
 
 
-@app.route("/v1/vfrmanual/get/<date>")
-def get_v1(date):
-    if date not in vfr_manual_data:
+@app.route("/v1/vfrmanual/get/<date>/<lang>")
+def get_v1(date, lang):
+    print(date)
+    print(lang)
+    if not vfr_manual_data.contains(lang, date):
         return "Not found", 404
-    return send_file(vfr_manual_data.path(date), as_attachment=True)
+    return send_file(vfr_manual_data.path(lang, date), as_attachment=True)

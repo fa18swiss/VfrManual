@@ -9,7 +9,7 @@ class DataFile:
     delta: datetime.timedelta
     __dir: str
     __extension: str
-    __items: list
+    __items: dict
     __last_check: datetime.datetime
     __logger: logging.Logger
 
@@ -29,10 +29,16 @@ class DataFile:
                 self.__items = content["Items"]
         else:
             self.__last_check = None
-            self.__items = list()
+            self.__items = dict()
 
     def __contains__(self, item):
-        return item in self.__items
+        raise NotImplementedError()
+
+    def contains(self, lang, date):
+        if date in self.__items:
+            return lang in self.__items[date]
+        else:
+            return False
 
     def __save(self):
         content = {
@@ -42,24 +48,31 @@ class DataFile:
         with open(self.__file, 'w') as f:
             json.dump(content, f, indent=2)
 
-    def add(self, item):
-        if self.__contains__(item):
+    def add(self, lang, date):
+        if self.contains(lang, date):
             return
-        self.__items.append(item)
-        self.__items.sort(reverse=True)
+        if date in self.__items:
+            item = self.__items[date]
+        else:
+            item = list()
+            self.__items[date] = item
+        item.append(lang)
         self.touch()
 
     def touch(self):
         self.__last_check = datetime.datetime.now()
         self.__save()
 
-    def path(self, item):
-        return os.path.join(self.__dir, item+self.__extension)
+    def path(self, lang, date):
+        return os.path.join(self.__dir, date + "_" + lang + self.__extension)
 
     def last(self):
         if len(self.__items) <= 0:
             return None
-        return self.__items[0]
+        keys = list(self.__items.keys())
+        keys.sort(reverse=True)
+        key = keys[0]
+        return key, self.__items[key]
 
     def last_check(self):
         return self.__last_check.isoformat()

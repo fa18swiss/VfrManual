@@ -1,11 +1,12 @@
 "use strict";
 
 function app() {
+    const DatabaseName = "App";
     const VftTable = "VfrManuals";
     const LastCheck = "LastCheck";
     let db;
 
-    const request = indexedDB.open("App", 1);
+    const request = window.indexedDB.open(DatabaseName, 1);
     request.onupgradeneeded = function (event) {
         const db = event.target.result;
         const objectStore = db.createObjectStore(VftTable);
@@ -47,7 +48,6 @@ function app() {
     }
 
     function downloadIfNeeded(date, lang) {
-        console.log("date, lang", date, lang)
         const key = date + "_" + lang;
         read(VftTable).count(key).onsuccess = function (event) {
             if (event.target.result <= 0) {
@@ -81,8 +81,10 @@ function app() {
             const keys = result.target.result;
             keys.sort();
             keys.reverse();
-            const parent = document.getElementById("dest");
-            parent.innerHTML = "";
+            const parent = document.createElement("div");
+            const dest = document.getElementById("dest");
+            dest.innerHTML = "";
+            dest.appendChild(parent);
             for (let i = 0; i < keys.length; i++) {
                 let key = keys[i];
                 if (key !== LastCheck && key.indexOf("_") >= 0) {
@@ -94,6 +96,12 @@ function app() {
     }
 
     document.getElementById("cmdRefresh").onclick = checkLast;
+    document.getElementById("cmdDelete").onclick = e => {
+        e.preventDefault();
+        if (!confirm("Delete all data ?")) return;
+        window.indexedDB.deleteDatabase(DatabaseName);
+        app()
+    };
 }
 
 window.onload = app;

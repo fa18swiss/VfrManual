@@ -2,3 +2,7 @@
 /logs
 /venv
 /data
+/node_modules
+/app/static/css/*.min.css
+/app/static/js/*.min.js
+/app/static/svg

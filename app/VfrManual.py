@@ -15,7 +15,6 @@ class VfrManual:
         "it": "https://www.skybriefing.com/portal/it/evfr-manual-gen"
     }
 
-    __URL = "https://www.skybriefing.com/portal/evfr-manual-gen"
     data_file: DataFile
     __logger: logging.Logger
 
@@ -30,12 +29,10 @@ class VfrManual:
         try:
             parseds = {}
             for lang, url in self.__URLs.items():
-                print("lang", lang)
-                print("url", url)
                 response = requests.get(url)
                 parsed_body = html.fromstring(response.text)
                 xpath_date = '//*[@id="column-1"]/table/tbody/tr/td[1]/strong/span'
-                xpath_link = '//*[@id="column-1"]/table/tbody/tr/td[4]/a/@href'
+                xpath_link = '//*[@id="column-1"]/table/tbody/tr/td[4]//a/@href'
 
                 date = parsed_body.xpath(xpath_date)
                 link = parsed_body.xpath(xpath_link)

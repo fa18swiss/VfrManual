@@ -3,7 +3,13 @@
   <head>
     <meta charset="utf-8">
     <title>Vfr Manual</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script src="static/js/jquery.slim.min.js"></script>
+    <script src="static/js/popper.min.js"></script>
+    <script src="static/js/bootstrap.min.js" ></script>
+
     <script>
       function check() {
         "use strict";
@@ -28,11 +34,25 @@
       }
     </script>
     <script src="static/app.js"></script>
+    <style>
+      #dest a svg {
+        float: right;
+        font-size: 1.5em;
+      }
+      #dest a img {
+        width:30px;
+        height:20px;
+        margin-right: 10px;
+        object-fit: fill;
+      }
+    </style>
   </head>
   <body>
-  <button id="cmdRefresh">Refresh</button>
-  <span id="lastCheck"></span>
-  <button id="cmdDelete">ClearCache</button>
-  <div id="dest"></div>
+  <nav class="navbar navbar-light bg-light">
+    <button class="btn btn-outline-success" type="button" id="cmdRefresh">Refresh</button>
+    <span class="navbar-brand mb-0 h1" id="lastCheck"></span>
+    <button class="btn btn-outline-danger" type="button" id="cmdDelete">Clear cache</button>
+  </nav>
+  <div class="list-group" id="dest"></div>
   </body>
 </html>

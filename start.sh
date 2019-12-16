@@ -4,8 +4,8 @@ docker run \
 	-it \
 	--rm \
 	-u $(id -u):$(id -g) \
-	-w /app \
 	-v `pwd`:/app \
+	-w /app \
 	node \
 	./install.sh
 
@@ -18,8 +18,9 @@ docker stop $app
 docker rm $app
 docker run \
 	-d \
-	-p 127.0.0.1:8003:80 \
 	--name=$app \
+	-p 127.0.0.1:8003:80 \
 	--restart=always \
+	-u $(id -u):$(id -g) \
 	-v `pwd`:/app \
 	$app:$ver

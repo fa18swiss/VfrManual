@@ -1,9 +1,9 @@
 #!/bin/bash
 
 
-$gulpVer=1.0
+gulpVer=1.0
 
-docker build -t gulp:$ver gulp
+docker build -t gulp:$gulpVer gulp
 
 docker run \
 	-it \
@@ -11,7 +11,8 @@ docker run \
 	-u $(id -u):$(id -g) \
 	-v `pwd`:/app \
 	-w /app \
-	gulp:$ver
+	gulp:$gulpVer \
+	/bin/bash -c "yarn install ; gulp"
 
 
 app=vfrmanualapi

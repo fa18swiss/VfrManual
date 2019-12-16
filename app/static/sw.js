@@ -1,9 +1,9 @@
-const CACHE = 'precache-v2';
+const CACHE = 'precache-v3';
 const RUNTIME = 'runtime';
 
 const CACHE_URLS = [
     '/',
-    '/static/css/bootstrap.css',
+    '/static/css/bootstrap.min.css',
     '/static/js/jquery.slim.min.js',
     '/static/js/popper.min.js',
     '/static/js/bootstrap.min.js',

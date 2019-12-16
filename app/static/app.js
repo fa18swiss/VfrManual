@@ -26,8 +26,6 @@ function app() {
                     if (!data.items.hasOwnProperty(id)) continue;
                     data.items[id].downloading = false;
                 }
-            } else {
-
             }
             refreshData(false);
             checkLast();
@@ -72,12 +70,11 @@ function app() {
         }, "json")
     }
 
-    function downloadIfNeeded(date, lang, done) {
-        const key = date + "_" + lang;
-        read(VftTable).count(key).onsuccess = function (event) {
+    function downloadIfNeeded(item, done) {
+        read(VftTable).count(item.id).onsuccess = function (event) {
             if (event.target.result <= 0) {
-                get("/v1/vfrmanual/get/" + date + "/" + lang, function (file) {
-                    write(VftTable).put(file, key);
+                get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, function (file) {
+                    write(VftTable).put(file, item.id);
                     done();
                 }, 'blob');
             } else {
@@ -96,7 +93,10 @@ function app() {
     }
 
     function refreshData(save) {
-        if (save) write(VftTable).put(data, Data);
+        if (save) {
+            write(VftTable).put(data, Data);
+            console.log("Write done");
+        }
         document.getElementById("lastCheck").textContent = data.LastCheck
             ? new Date(data.LastCheck).toLocaleString()
             : "N/A";
@@ -120,6 +120,8 @@ function app() {
             if (item.hasFile) cls += " list-group-item-success";
             downloadLink.setAttribute("class", cls);
             downloadLink.setAttribute("_target", "blank");
+            downloadLink.setAttribute("data-date", item.date);
+            downloadLink.setAttribute("data-lang", item.lang);
             downloadLink.onclick = onLinkClick;
             const img = getOrCreate(downloadLink, "img");
             img.src = "static/svg/" + item.lang + ".svg";
@@ -136,9 +138,13 @@ function app() {
             listitems.push(divs.item(i));
         }
         listitems.sort(function(a, b) {
-            var compA = a.getAttribute('id').toUpperCase();
-            var compB = b.getAttribute('id').toUpperCase();
-            return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            const dateA = a.getAttribute("data-date").toUpperCase();
+            const dateB = b.getAttribute("data-date").toUpperCase();
+            const comp = dateA.localeCompare(dateB);
+            if (comp !== 0) return -comp;
+            const langA = a.getAttribute("data-lang").toUpperCase();
+            const langB = b.getAttribute("data-lang").toUpperCase();
+            return  langA.localeCompare(langB);
         });
         for (let i = 0; i < listitems.length; i++) {
             dest.appendChild(listitems[i]);
@@ -159,7 +165,7 @@ function app() {
         const svg = getOrCreate(this, "svg");
         svg.outerHTML = BiArrowRepeat;
 
-        downloadIfNeeded(item.date, item.lang, () => {
+        downloadIfNeeded(item, () => {
             item.hasFile = true;
             item.downloading = false;
             refreshData(true);

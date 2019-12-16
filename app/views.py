@@ -1,4 +1,3 @@
-import os.path
 from app import app
 from .Data import *
 from flask import jsonify, send_file
@@ -20,6 +19,15 @@ def last_v1():
         "LastCheck": vfr_manual_data.last_check(),
         "Last": last[0],
         "Langs": last[1],
+    })
+
+
+@app.route("/v1/vfrmanual/all")
+def all_v1():
+    vfr_manual.check()
+    return jsonify({
+        "LastCheck": vfr_manual_data.last_check(),
+        "All": vfr_manual_data.all()
     })
 
 

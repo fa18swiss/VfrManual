@@ -52,17 +52,21 @@ function app() {
 
     function checkLast(e) {
         if (e) e.preventDefault();
-        get("/v1/vfrmanual/last", function (res) {
-            const date = res.Last;
-            for(let i = 0 ; i < res.Langs.length ; i++) {
-                const lang = res.Langs[i];
-                const id = date + "_" + lang;
-                const item = (id in data.items) ? data.items[id] : {hasFile: false};
-                item.date = date;
-                item.id = id;
-                item.lang = lang;
-                data.items[id] = item;
+        get("/v1/vfrmanual/all", function (res) {
+            for (let date in res.All) {
+                if (!res.All.hasOwnProperty(date)) continue;
+                let langs = res.All[date];
+                for(let i = 0 ; i < langs.length ; i++) {
+                    const lang = langs[i];
+                    const id = date + "_" + lang;
+                    const item = (id in data.items) ? data.items[id] : {hasFile: false};
+                    item.date = date;
+                    item.id = id;
+                    item.lang = lang;
+                    data.items[id] = item;
+                }
             }
+
             data.LastCheck = res.LastCheck;
 
             refreshData(true);

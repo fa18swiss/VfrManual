@@ -63,6 +63,9 @@ class DataFile:
         self.__last_check = datetime.datetime.now()
         self.__save()
 
+    def all(self):
+        return {k: v for (k, v) in self.__items.items()}
+
     def path(self, lang, date):
         return os.path.join(self.__dir, date + "_" + lang + self.__extension)
 

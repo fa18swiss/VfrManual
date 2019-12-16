@@ -1,7 +1,10 @@
 #!/bin/bash
 
+docker run -it --rm -w /app -v `pwd`:/app node yarn install
+
+
 app=vfrmanualapi
-ver=1.1
+ver=1.0
 
 docker build -t $app:$ver .
 docker stop $app

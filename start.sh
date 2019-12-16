@@ -1,7 +1,7 @@
 #!/bin/bash
 
 app=vfrmanualapi
-ver=1.0
+ver=1.1
 
 docker build -t $app:$ver .
 docker stop $app

@@ -1,13 +1,17 @@
 #!/bin/bash
 
+
+$gulpVer=1.0
+
+docker build -t gulp:$ver gulp
+
 docker run \
 	-it \
 	--rm \
 	-u $(id -u):$(id -g) \
 	-v `pwd`:/app \
 	-w /app \
-	node \
-	./install.sh
+	gulp:$ver
 
 
 app=vfrmanualapi

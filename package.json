@@ -6,6 +6,7 @@
   "devDependencies": {
     "bootstrap": "^4.3.1",
     "bootstrap-icons": "^1.0.0-alpha2",
+    "del": "^5.1.0",
     "gulp": "^4.0.2",
     "gulp-rename": "^2.0.0",
     "jquery": "^3.4.1",

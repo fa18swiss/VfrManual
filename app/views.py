@@ -4,11 +4,17 @@ from flask import jsonify, send_file
 
 __app = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__))))
 __root = os.path.join(__app, "root.html")
+__sw = os.path.join(__app, "sw.js")
 
 
 @app.route("/")
 def index():
     return send_file(__root)
+
+
+@app.route("/sw.js")
+def sw():
+    return send_file(__sw)
 
 
 @app.route("/v1/vfrmanual/last")

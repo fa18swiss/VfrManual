@@ -13,12 +13,12 @@ function app() {
     const dest = document.getElementById("dest");
 
     const request = window.indexedDB.open(DatabaseName, 1);
-    request.onupgradeneeded = function (event) {
+    request.onupgradeneeded = event => {
         const db = event.target.result;
         const objectStore = db.createObjectStore(VftTable);
     };
-    request.onsuccess = function (evt) {
-        db = this.result;
+    request.onsuccess = evt => {
+        db = evt.target.result;
         read(VftTable).get(Data).onsuccess = r => {
             if (r.target.result) {
                 data = r.target.result;
@@ -52,7 +52,7 @@ function app() {
 
     function checkLast(e) {
         if (e) e.preventDefault();
-        get("/v1/vfrmanual/all", function (res) {
+        get("/v1/vfrmanual/all", res => {
             for (let date in res.All) {
                 if (!res.All.hasOwnProperty(date)) continue;
                 let langs = res.All[date];
@@ -75,9 +75,9 @@ function app() {
     }
 
     function downloadIfNeeded(item, done) {
-        read(VftTable).count(item.id).onsuccess = function (event) {
+        read(VftTable).count(item.id).onsuccess = event => {
             if (event.target.result <= 0) {
-                get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, function (file) {
+                get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, file => {
                     write(VftTable).put(file, item.id);
                     done();
                 }, 'blob');
@@ -99,7 +99,6 @@ function app() {
     function refreshData(save) {
         if (save) {
             write(VftTable).put(data, Data);
-            console.log("Write done");
         }
         document.getElementById("lastCheck").textContent = data.LastCheck
             ? new Date(data.LastCheck).toLocaleString()
@@ -107,7 +106,6 @@ function app() {
         for (let id in data.items) {
             if (!data.items.hasOwnProperty(id)) continue;
             let item = data.items[id];
-            console.log("item", item);
 
             const downloadLink =  document.getElementById(id) || document.createElement('a');
 
@@ -141,7 +139,7 @@ function app() {
         for (let i = 0; i < divs.length; i++) {
             listitems.push(divs.item(i));
         }
-        listitems.sort(function(a, b) {
+        listitems.sort((a, b) => {
             const dateA = a.getAttribute("data-date").toUpperCase();
             const dateB = b.getAttribute("data-date").toUpperCase();
             const comp = dateA.localeCompare(dateB);
@@ -164,8 +162,6 @@ function app() {
         item.downloading = true;
         this.classList.add("list-group-item-info");
 
-        console.log("start Download", id);
-
         const svg = getOrCreate(this, "svg");
         svg.outerHTML = BiArrowRepeat;
 
@@ -183,7 +179,13 @@ function app() {
         e.preventDefault();
         if (!confirm("Delete all data ?")) return;
         window.indexedDB.deleteDatabase(DatabaseName);
-        window.location.reload(true);
+        caches.keys().then(cacheNames => {
+            console.log("cacheNames", cacheNames);
+            cacheNames.forEach(cacheName => {
+                caches.delete(cacheName);
+            });
+            window.location.reload(true);
+        });
     };
 }
 

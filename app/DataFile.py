@@ -3,6 +3,7 @@ import logging
 import os
 import os.path
 import json
+from . import DateUtils
 
 
 class DataFile:
@@ -25,10 +26,10 @@ class DataFile:
         if os.path.isfile(self.__file):
             with open(self.__file, 'r') as f:
                 content = json.load(f)
-                self.__last_check = datetime.datetime.fromisoformat(content["LastCheck"])
+                self.__last_check = DateUtils.parse_string(content["LastCheck"])
                 self.__items = content["Items"]
         else:
-            self.__last_check = None
+            self.__last_check = datetime.datetime(1900, 1, 1, tzinfo=datetime.timezone.utc)
             self.__items = dict()
 
     def __contains__(self, item):
@@ -42,7 +43,7 @@ class DataFile:
 
     def __save(self):
         content = {
-            "LastCheck": self.__last_check.isoformat(),
+            "LastCheck": DateUtils.to_string(self.__last_check),
             "Items": self.__items
         }
         with open(self.__file, 'w') as f:
@@ -60,7 +61,8 @@ class DataFile:
         self.touch()
 
     def touch(self):
-        self.__last_check = datetime.datetime.now()
+        print("touch")
+        self.__last_check = DateUtils.utc_now()
         self.__save()
 
     def all(self):
@@ -78,10 +80,8 @@ class DataFile:
         return key, self.__items[key]
 
     def last_check(self):
-        return self.__last_check.isoformat()
+        return DateUtils.to_string(self.__last_check)
 
     def need_update(self):
-        if self.__last_check is None:
-            return True
         self.__logger.debug("Delta is %s", self.delta)
-        return self.__last_check + self.delta < datetime.datetime.now()
+        return self.__last_check + self.delta < DateUtils.utc_now()

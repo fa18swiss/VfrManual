@@ -39,8 +39,6 @@ def all_v1():
 
 @app.route("/v1/vfrmanual/get/<date>/<lang>")
 def get_v1(date, lang):
-    print(date)
-    print(lang)
     if not vfr_manual_data.contains(lang, date):
         return "Not found", 404
     return send_file(vfr_manual_data.path(lang, date), as_attachment=True)

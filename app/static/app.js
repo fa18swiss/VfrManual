@@ -11,6 +11,7 @@ function app() {
     let data = { items:{} };
 
     const dest = document.getElementById("dest");
+    const lastCheck = document.getElementById("lastCheck");
 
     const request = window.indexedDB.open(DatabaseName, 1);
     request.onupgradeneeded = event => {
@@ -71,7 +72,7 @@ function app() {
 
             refreshData(true);
 
-        }, "json")
+        }, "json");
     }
 
     function downloadIfNeeded(item, done) {
@@ -82,7 +83,7 @@ function app() {
                     done();
                 }, 'blob');
             } else {
-                done()
+                done();
             }
         };
     }
@@ -100,9 +101,7 @@ function app() {
         if (save) {
             write(VftTable).put(data, Data);
         }
-        document.getElementById("lastCheck").textContent = data.LastCheck
-            ? new Date(data.LastCheck).toLocaleString()
-            : "N/A";
+        lastCheck.textContent = data.LastCheck ? new Date(data.LastCheck).toLocaleString() : "N/A";
         for (let id in data.items) {
             if (!data.items.hasOwnProperty(id)) continue;
             let item = data.items[id];
@@ -135,21 +134,17 @@ function app() {
             dest.appendChild(downloadLink);
         }
         let divs = dest.getElementsByTagName("a");
-        let listitems = [];
+        let listItems = [];
         for (let i = 0; i < divs.length; i++) {
-            listitems.push(divs.item(i));
+            listItems.push(divs.item(i));
         }
-        listitems.sort((a, b) => {
-            const dateA = a.getAttribute("data-date").toUpperCase();
-            const dateB = b.getAttribute("data-date").toUpperCase();
-            const comp = dateA.localeCompare(dateB);
+        listItems.sort((a, b) => {
+            const comp = a.getAttribute("data-date").toUpperCase().localeCompare(b.getAttribute("data-date").toUpperCase());
             if (comp !== 0) return -comp;
-            const langA = a.getAttribute("data-lang").toUpperCase();
-            const langB = b.getAttribute("data-lang").toUpperCase();
-            return  langA.localeCompare(langB);
+            return  a.getAttribute("data-lang").toUpperCase().localeCompare(b.getAttribute("data-lang").toUpperCase());
         });
-        for (let i = 0; i < listitems.length; i++) {
-            dest.appendChild(listitems[i]);
+        for (let i = 0; i < listItems.length; i++) {
+            dest.appendChild(listItems[i]);
         }
     }
     function onLinkClick(e) {

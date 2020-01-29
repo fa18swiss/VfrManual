@@ -14,6 +14,9 @@ class VfrManual:
         "de": "https://www.skybriefing.com/portal/de/evfr-manual-gen",
         "it": "https://www.skybriefing.com/portal/it/evfr-manual-gen"
     }
+    __xpath_tr = '//*[@id="column-1"]/table/tbody/tr'
+    __xpath_date = '//*[@id="column-1"]/table/tbody/tr[%d]/td[1]/strong/span/text()'
+    __xpath_link = '//*[@id="column-1"]/table/tbody/tr[%d]/td[4]//a/@href'
 
     data_file: DataFile
     __logger: logging.Logger
@@ -31,27 +34,30 @@ class VfrManual:
             for lang, url in self.__URLs.items():
                 response = requests.get(url)
                 parsed_body = html.fromstring(response.text)
-                xpath_date = '//*[@id="column-1"]/table/tbody/tr/td[1]/strong/span'
-                xpath_link = '//*[@id="column-1"]/table/tbody/tr/td[4]//a/@href'
 
-                dates = parsed_body.xpath(xpath_date)
-                links = parsed_body.xpath(xpath_link)
+                tr = parsed_body.xpath(self.__xpath_tr)
+                nb_tr = len(tr)
+                self.__logger.debug("Nb tr=%d", nb_tr)
+                for i in range(nb_tr, 0, -1):
+                    dates = parsed_body.xpath(self.__xpath_date % i)
+                    links = parsed_body.xpath(self.__xpath_link % i)
+                    self.__logger.debug("Raw tr=%d date=%s link=%s", i, dates, links)
+                    nb_date = len(dates)
+                    nb_link = len(links)
 
-                self.__logger.debug("Raw dates=%s links=%s", dates, links)
-
-                if len(dates) != len(links):
-                    raise Exception("Invalid len date:%d link:%d" % (len(dates), len(links)))
-
-                for i in range(len(dates) - 1, -1, -1):
-                    date = dates[i].text_content().strip()
-                    date = " ".join(date.split(" ")[-3:])
-                    date = datetime.datetime.strptime(date, "%d %b %Y")
-                    date = date.date()
-                    date = date.isoformat()
-                    link = urljoin(url, links[i])
-
-                    self.__logger.debug("Decoded date=%s link=%s", date, link)
-                    parseds.append((lang, date, link))
+                    if nb_date == 1 and nb_link == 1:
+                        date = str(dates[0]).strip()
+                        date = " ".join(date.split(" ")[-3:])
+                        date = datetime.datetime.strptime(date, "%d %b %Y")
+                        date = date.date()
+                        date = date.isoformat()
+                        link = urljoin(url, links[0])
+                        self.__logger.debug("Decoded date=%s link=%s", dates, links)
+                        parseds.append((lang, date, link))
+                    elif nb_date == 1 and nb_link == 0:
+                        self.__logger.warning("No link found i:%d" % i)
+                    else:
+                        raise Exception("Invalid len i:%d date:%d link:%d" % (i, nb_date, nb_link))
 
             for lang, date, link in parseds:
                 if self.data_file.contains(lang, date):

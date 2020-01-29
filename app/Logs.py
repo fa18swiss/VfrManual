@@ -2,7 +2,6 @@
 def init():
     import json
     import logging.config
-    import os
     import os.path
 
     root_dir = os.path.join(os.path.dirname(__file__), "..")

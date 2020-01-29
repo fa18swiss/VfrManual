@@ -61,7 +61,6 @@ class DataFile:
         self.touch()
 
     def touch(self):
-        print("touch")
         self.__last_check = DateUtils.utc_now()
         self.__save()
 

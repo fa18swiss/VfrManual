@@ -14,9 +14,9 @@ class VfrManual:
         "de": "https://www.skybriefing.com/portal/de/evfr-manual-gen",
         "it": "https://www.skybriefing.com/portal/it/evfr-manual-gen"
     }
-    __xpath_tr = '//*[@id="column-1"]/table/tbody/tr'
-    __xpath_date = '//*[@id="column-1"]/table/tbody/tr[%d]/td[1]/strong/span/text()'
-    __xpath_link = '//*[@id="column-1"]/table/tbody/tr[%d]/td[4]//a/@href'
+    __xpath_tr = '//div[@class="portlet-body"]//table/tbody/tr'
+    __xpath_date = '//div[@class="portlet-body"]//table/tbody/tr[%d]/td[1]/strong/text()'
+    __xpath_link = '//div[@class="portlet-body"]//table/tbody/tr[%d]/td[2]//a/@href'
 
     data_file: DataFile
     __logger: logging.Logger

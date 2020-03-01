@@ -38,7 +38,7 @@ function app() {
         xhr.open('GET', url, true);
         xhr.responseType = responseType;
         xhr.onload = function () {
-            callback(this.response)
+            callback(this.response, this.status >= 200 && this.status < 300)
         };
         xhr.send();
     }
@@ -53,7 +53,8 @@ function app() {
 
     function checkLast(e) {
         if (e) e.preventDefault();
-        get("/v1/vfrmanual/all", res => {
+        get("/v1/vfrmanual/all", (res, success) => {
+            if (!success) return;
             for (let date in res.All) {
                 if (!res.All.hasOwnProperty(date)) continue;
                 let langs = res.All[date];
@@ -78,12 +79,16 @@ function app() {
     function downloadIfNeeded(item, done) {
         read(VftTable).count(item.id).onsuccess = event => {
             if (event.target.result <= 0) {
-                get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, file => {
-                    write(VftTable).put(file, item.id);
-                    done();
+                get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, (file, success) => {
+                    if (success) {
+                        write(VftTable).put(file, item.id);
+                        done(true);
+                    } else {
+                        done(false);
+                    }
                 }, 'blob');
             } else {
-                done();
+                done(true);
             }
         };
     }
@@ -160,8 +165,8 @@ function app() {
         const svg = getOrCreate(this, "svg");
         svg.outerHTML = BiArrowRepeat;
 
-        downloadIfNeeded(item, () => {
-            item.hasFile = true;
+        downloadIfNeeded(item, success => {
+            item.hasFile = success;
             item.downloading = false;
             refreshData(true);
         });

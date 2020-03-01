@@ -1,6 +1,6 @@
 "use strict";
 
-function app() {
+async function app() {
     const DatabaseName = "App";
     const VftTable = "VfrManuals";
     const Data = "Data";
@@ -8,7 +8,6 @@ function app() {
     const BiArchive = '<svg class="bi bi-archive" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 7v7.5c0 .864.642 1.5 1.357 1.5h9.286c.715 0 1.357-.636 1.357-1.5V7h1v7.5c0 1.345-1.021 2.5-2.357 2.5H5.357C4.021 17 3 15.845 3 14.5V7h1z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M7.5 9.5A.5.5 0 018 9h4a.5.5 0 010 1H8a.5.5 0 01-.5-.5zM17 4H3v2h14V4zM3 3a1 1 0 00-1 1v2a1 1 0 001 1h14a1 1 0 001-1V4a1 1 0 00-1-1H3z" clip-rule="evenodd"/></svg>';
     const BiArrowRepeat = '<svg class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 9.5a.5.5 0 00-.5.5 6.5 6.5 0 0012.13 3.25.5.5 0 00-.866-.5A5.5 5.5 0 014.5 10a.5.5 0 00-.5-.5z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4.354 9.146a.5.5 0 00-.708 0l-2 2a.5.5 0 00.708.708L4 10.207l1.646 1.647a.5.5 0 00.708-.708l-2-2zM15.947 10.5a.5.5 0 00.5-.5 6.5 6.5 0 00-12.13-3.25.5.5 0 10.866.5A5.5 5.5 0 0115.448 10a.5.5 0 00.5.5z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M18.354 8.146a.5.5 0 00-.708 0L16 9.793l-1.646-1.647a.5.5 0 00-.708.708l2 2a.5.5 0 00.708 0l2-2a.5.5 0 000-.708z" clip-rule="evenodd"/></svg>';
     let db;
-    let data = { items:{} };
 
     const dest = document.getElementById("dest");
     const lastCheck = document.getElementById("lastCheck");
@@ -18,29 +17,45 @@ function app() {
         const db = event.target.result;
         const objectStore = db.createObjectStore(VftTable);
     };
-    request.onsuccess = evt => {
-        db = evt.target.result;
-        read(VftTable).get(Data).onsuccess = r => {
-            if (r.target.result) {
-                data = r.target.result;
-                for (let id in data.items) {
-                    if (!data.items.hasOwnProperty(id)) continue;
-                    data.items[id].downloading = false;
-                }
-            }
-            refreshData(false);
-            checkLast();
-        };
-    };
+    db = await promiseReq(request);
+    let data = await promiseReq(read(VftTable).get(Data));
+    if (data) {
+        for (let id in data.items) {
+            if (!data.items.hasOwnProperty(id)) continue;
+            data.items[id].downloading = false;
+        }
+    } else {
+       data = { items:{} }
+    }
 
-    function get(url, callback, responseType) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = responseType;
-        xhr.onload = function () {
-            callback(this.response, this.status >= 200 && this.status < 300)
-        };
-        xhr.send();
+    refreshData(false);
+    await checkLast();
+
+    function get(url, responseType) {
+        return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.responseType = responseType;
+            xhr.onload =() => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(xhr.response);
+                } else {
+                    reject({
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        response: xhr.response
+                    });
+                }
+            };
+            xhr.onerror = () => {
+                reject({
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    response: xhr.response
+                });
+            };
+            xhr.send();
+        });
     }
 
     function read(table) {
@@ -51,10 +66,10 @@ function app() {
         return db.transaction([table], "readwrite").objectStore(table)
     }
 
-    function checkLast(e) {
+    async function checkLast(e) {
         if (e) e.preventDefault();
-        get("/v1/vfrmanual/all", (res, success) => {
-            if (!success) return;
+        try {
+            let res = await get("/v1/vfrmanual/all", "json");
             for (let date in res.All) {
                 if (!res.All.hasOwnProperty(date)) continue;
                 let langs = res.All[date];
@@ -72,25 +87,26 @@ function app() {
             data.LastCheck = res.LastCheck;
 
             refreshData(true);
-
-        }, "json");
+        } catch (e) {
+            console.error("Fail to get last files", e);
+        }
     }
-
-    function downloadIfNeeded(item, done) {
-        read(VftTable).count(item.id).onsuccess = event => {
-            if (event.target.result <= 0) {
-                get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, (file, success) => {
-                    if (success) {
-                        write(VftTable).put(file, item.id);
-                        done(true);
-                    } else {
-                        done(false);
-                    }
-                }, 'blob');
-            } else {
-                done(true);
-            }
-        };
+    function promiseReq(req) {
+        return new Promise((resolve, reject) => {
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+    async function downloadIfNeeded(item, done) {
+        let result = await promiseReq(read(VftTable).count(item.id));
+        if (result > 0) return true;
+        try {
+            let res = await get("/v1/vfrmanual/get/" + item.date + "/" + item.lang, "blob");
+            write(VftTable).put(res, item.id);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     function getOrCreate(container, tag) {
@@ -118,6 +134,7 @@ function app() {
             if (item.hasFile && downloadLink.href.endsWith("#")) {
                 read(VftTable).get(id).onsuccess = r => {
                     downloadLink.href = window.URL.createObjectURL(r.target.result);
+                    downloadLink.download = "VFR-Manual_" + id + ".pdf";
                 }
             }
             downloadLink.id = id;
@@ -152,7 +169,7 @@ function app() {
             dest.appendChild(listItems[i]);
         }
     }
-    function onLinkClick(e) {
+    async function onLinkClick(e) {
         if (!this.href.endsWith("#")) return true;
         e.preventDefault();
 
@@ -165,27 +182,24 @@ function app() {
         const svg = getOrCreate(this, "svg");
         svg.outerHTML = BiArrowRepeat;
 
-        downloadIfNeeded(item, success => {
-            item.hasFile = success;
-            item.downloading = false;
-            refreshData(true);
-        });
+        item.hasFile = await downloadIfNeeded(item);
+        item.downloading = false;
+        refreshData(true);
 
         return false;
     }
 
     document.getElementById("cmdRefresh").onclick = checkLast;
-    document.getElementById("cmdDelete").onclick = e => {
+    document.getElementById("cmdDelete").onclick = async e => {
         e.preventDefault();
         if (!confirm("Delete all data ?")) return;
         window.indexedDB.deleteDatabase(DatabaseName);
-        caches.keys().then(cacheNames => {
-            console.log("cacheNames", cacheNames);
-            cacheNames.forEach(cacheName => {
-                caches.delete(cacheName);
-            });
-            window.location.reload(true);
+        const cacheNames = await caches.keys();
+        console.log("cacheNames", cacheNames);
+        cacheNames.forEach(cacheName => {
+            caches.delete(cacheName);
         });
+        window.location.reload(true);
     };
 }
 

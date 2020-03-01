@@ -25,6 +25,7 @@
       function check() {
         "use strict";
 
+        if (typeof Promise === "undefined") return "No Promise";
         if (!('serviceWorker' in navigator)) return "No serviceWorker";
         if (!('indexedDB' in window)) return "No indexedDB";
         if (!('URL' in window)) return "No URL";

@@ -6,6 +6,7 @@ import mimetypes
 __app = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__))))
 __root = os.path.join(__app, "root.html")
 __sw = os.path.join(__app, "sw.js")
+__ico = os.path.join(__app, "static", "icon", "favicon.ico")
 
 mimetypes.add_type("application/javascript", ".js")
 
@@ -18,6 +19,11 @@ def index():
 @app.route("/sw.js")
 def sw():
     return send_file(__sw)
+
+
+@app.route("/favicon.ico")
+def ico():
+    return send_file(__ico)
 
 
 @app.route("/v1/vfrmanual/last")

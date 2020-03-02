@@ -28,7 +28,7 @@ async function app() {
        data = { items:{} }
     }
 
-    refreshData(false);
+    await refreshData(false);
     await checkLast();
 
     function get(url, responseType) {
@@ -70,6 +70,9 @@ async function app() {
         if (e) e.preventDefault();
         try {
             let res = await get("/v1/vfrmanual/all", "json");
+
+            const ids = Object.keys(data.items);
+
             for (let date in res.All) {
                 if (!res.All.hasOwnProperty(date)) continue;
                 let langs = res.All[date];
@@ -81,12 +84,27 @@ async function app() {
                     item.id = id;
                     item.lang = lang;
                     data.items[id] = item;
+                    let index = ids.indexOf(id);
+                    if (index >= 0) {
+                        ids.splice(index, 1);
+                    }
                 }
+            }
+
+            for(let i = 0 ; i < ids.length ; i++) {
+                const id = ids[i];
+                const item = data.items[id];
+                console.log("Missing", id, item);
+                if (item.downloading) continue;
+                if (item.hasFile) {
+                    await promiseReq(write(VftTable).delete(id))
+                }
+                delete data.items[id];
             }
 
             data.LastCheck = res.LastCheck;
 
-            refreshData(true);
+            await refreshData(true);
         } catch (e) {
             console.error("Fail to get last files", e);
         }
@@ -118,9 +136,9 @@ async function app() {
         return item;
     }
 
-    function refreshData(save) {
+    async function refreshData(save) {
         if (save) {
-            write(VftTable).put(data, Data);
+            await promiseReq(write(VftTable).put(data, Data));
         }
         lastCheck.textContent = data.LastCheck ? new Date(data.LastCheck).toLocaleString() : "N/A";
         for (let id in data.items) {
@@ -158,7 +176,13 @@ async function app() {
         let divs = dest.getElementsByTagName("a");
         let listItems = [];
         for (let i = 0; i < divs.length; i++) {
-            listItems.push(divs.item(i));
+            const item = divs.item(i);
+            const itemId = item.getAttribute("id");
+            if (itemId in data.items) {
+                listItems.push(item);
+            } else {
+                dest.removeChild(item)
+            }
         }
         listItems.sort((a, b) => {
             const comp = a.getAttribute("data-date").toUpperCase().localeCompare(b.getAttribute("data-date").toUpperCase());
@@ -184,7 +208,7 @@ async function app() {
 
         item.hasFile = await downloadIfNeeded(item);
         item.downloading = false;
-        refreshData(true);
+        await refreshData(true);
 
         return false;
     }

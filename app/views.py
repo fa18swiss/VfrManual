@@ -1,10 +1,13 @@
 from app import app
 from .Data import *
 from flask import jsonify, send_file
+import mimetypes
 
 __app = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__))))
 __root = os.path.join(__app, "root.html")
 __sw = os.path.join(__app, "sw.js")
+
+mimetypes.add_type("application/javascript", ".js")
 
 
 @app.route("/")

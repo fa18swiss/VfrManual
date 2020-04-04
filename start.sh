@@ -12,7 +12,7 @@ docker run \
 	-v `pwd`:/app \
 	-w /app \
 	gulp:$gulpVer \
-	/bin/bash -c "yarn install ; gulp"
+	/bin/sh -c "yarn install ; gulp"
 
 
 app=vfrmanualapi

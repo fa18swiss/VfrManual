@@ -26,6 +26,5 @@ docker run \
 	--name=$app \
 	-p 127.0.0.1:8003:80 \
 	--restart=always \
-	-u $(id -u):$(id -g) \
 	-v `pwd`:/app \
 	$app:$ver

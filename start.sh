@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-gulpVer=1.0
+gulpVer=1.1
 
 docker build -t gulp:$gulpVer gulp
 

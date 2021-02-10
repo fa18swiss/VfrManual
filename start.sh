@@ -16,7 +16,7 @@ docker run \
 
 
 app=vfrmanualapi
-ver=1.0
+ver=1.0.4
 
 docker build -t $app:$ver .
 docker stop $app

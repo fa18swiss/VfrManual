@@ -21,7 +21,7 @@ class VfrManual:
     data_file: DataFile
     __logger: logging.Logger
 
-    def __init__(self, data_file):
+    def __init__(self, data_file: DataFile):
         self.data_file = data_file
         self.__logger = logging.getLogger(__name__)
 

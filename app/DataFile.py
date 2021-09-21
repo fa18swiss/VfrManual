@@ -14,7 +14,7 @@ class DataFile:
     __last_check: datetime.datetime
     __logger: logging.Logger
 
-    def __init__(self, directory, delta=None, extension=".pdf"):
+    def __init__(self, directory: str, delta: datetime.timedelta = None, extension: str = ".pdf"):
         if delta is None:
             delta = datetime.timedelta(hours=1)
         self.__logger = logging.getLogger(__name__)

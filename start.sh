@@ -9,11 +9,12 @@ docker run \
 	-it \
 	--rm \
 	-u $(id -u):$(id -g) \
-	-v `pwd`:/app \
+	-v $(pwd):/app \
 	-w /app \
 	gulp:$gulpVer \
 	/bin/sh -c "yarn install ; gulp"
 
+rm -rf node_modules
 
 app=vfrmanualapi
 ver=1.0.5
@@ -26,5 +27,5 @@ docker run \
 	--name=$app \
 	-p 127.0.0.1:8003:80 \
 	--restart=always \
-	-v `pwd`:/app \
+	-v $(pwd):/app \
 	$app:$ver

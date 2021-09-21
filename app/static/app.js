@@ -94,7 +94,6 @@ async function app() {
             for(let i = 0 ; i < ids.length ; i++) {
                 const id = ids[i];
                 const item = data.items[id];
-                console.log("Missing", id, item);
                 if (item.downloading) continue;
                 if (item.hasFile) {
                     await promiseReq(write(VftTable).delete(id))
@@ -175,15 +174,21 @@ async function app() {
         }
         let divs = dest.getElementsByTagName("a");
         let listItems = [];
+        let toRemove = [];
         for (let i = 0; i < divs.length; i++) {
             const item = divs.item(i);
             const itemId = item.getAttribute("id");
             if (itemId in data.items) {
                 listItems.push(item);
             } else {
-                dest.removeChild(item)
+                toRemove.push(item);
             }
         }
+        for (let i = 0; i < toRemove.length; i++) {
+            toRemove[i].remove();
+            toRemove[i] = null;
+        }
+        toRemove = null;
         listItems.sort((a, b) => {
             const comp = a.getAttribute("data-date").toUpperCase().localeCompare(b.getAttribute("data-date").toUpperCase());
             if (comp !== 0) return -comp;

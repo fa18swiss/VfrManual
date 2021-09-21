@@ -114,7 +114,7 @@ async function app() {
             req.onerror = () => reject(req.error);
         });
     }
-    async function downloadIfNeeded(item, done) {
+    async function downloadIfNeeded(item) {
         let result = await promiseReq(read(VftTable).count(item.id));
         if (result > 0) return true;
         try {

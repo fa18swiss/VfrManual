@@ -53,26 +53,41 @@
     </script>
     <script src="static/app.js"></script>
     <style>
-      #dest a svg {
+      .dest a svg  {
         float: right;
         font-size: 1.5em;
       }
-      #dest a img {
+      .dest a img {
         width:30px;
         height:20px;
         margin-right: 10px;
         object-fit: fill;
+      }
+      .dest {
+        height: calc(50vh - 56px);
+        overflow-y: scroll;
+      }
+      nav {
+        max-height: 56px;
       }
     </style>
   </head>
   <body>
   <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
-      <button class="btn btn-outline-success" type="button" id="cmdRefresh">Refresh</button>
-      <span class="navbar-brand mb-0 h1" id="lastCheck"></span>
-      <button class="btn btn-outline-danger" type="button" id="cmdDelete">Clear cache</button>
+      <button class="btn btn-outline-success" type="button" id="cmdRefreshVfrManual">Refresh</button>
+      <span class="navbar-brand mb-0">VFR Manual</span>
+      <span class="navbar-brand mb-0 h1" id="lastCheckVfrManual"></span>
     </div>
   </nav>
-  <div class="list-group" id="dest"></div>
+  <div class="list-group dest" id="destVfrManual"></div>
+  <nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <button class="btn btn-outline-success" type="button" id="cmdRefreshDabs">Refresh</button>
+      <span class="navbar-brand mb-0">DABS</span>
+      <span class="navbar-brand mb-0 h1" id="lastCheckDabs">00.00.0000, 00:00:00</span>
+    </div>
+  </nav>
+  <div class="list-group dest" id="destDabs"></div>
   </body>
 </html>

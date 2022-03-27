@@ -3,6 +3,7 @@ import logging
 import os
 import os.path
 import json
+from typing import Optional
 from . import DateUtils
 
 
@@ -10,7 +11,7 @@ class DataFile:
     delta: datetime.timedelta
     __dir: str
     __extension: str
-    __items: dict
+    __items: dict[str, list[str]]
     __last_check: datetime.datetime
     __logger: logging.Logger
 
@@ -32,10 +33,10 @@ class DataFile:
             self.__last_check = datetime.datetime(1900, 1, 1, tzinfo=datetime.timezone.utc)
             self.__items = dict()
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         raise NotImplementedError()
 
-    def contains(self, lang, date):
+    def contains(self, lang: str, date: str) -> bool:
         if date in self.__items:
             return lang in self.__items[date]
         else:
@@ -49,7 +50,7 @@ class DataFile:
         with open(self.__file, 'w') as f:
             json.dump(content, f, indent=2)
 
-    def add(self, lang, date):
+    def add(self, lang: str, date: str):
         if self.contains(lang, date):
             return
         if date in self.__items:
@@ -64,13 +65,13 @@ class DataFile:
         self.__last_check = DateUtils.utc_now()
         self.__save()
 
-    def all(self):
+    def all(self) -> dict[str, list[str]]:
         return {k: v for (k, v) in self.__items.items()}
 
-    def path(self, lang, date):
+    def path(self, lang: str, date: str) -> str:
         return os.path.join(self.__dir, date + "_" + lang + self.__extension)
 
-    def last(self):
+    def last(self) -> Optional[tuple[str, list[str]]]:
         if len(self.__items) <= 0:
             return None
         keys = list(self.__items.keys())
@@ -78,9 +79,9 @@ class DataFile:
         key = keys[0]
         return key, self.__items[key]
 
-    def last_check(self):
+    def last_check(self) -> str:
         return DateUtils.to_string(self.__last_check)
 
-    def need_update(self):
+    def need_update(self) -> bool:
         self.__logger.debug("Delta is %s", self.delta)
         return self.__last_check + self.delta < DateUtils.utc_now()

@@ -1,4 +1,5 @@
 import os.path
+import datetime
 
 from .DataFile import DataFile
 from .VfrManual import VfrManual
@@ -11,5 +12,5 @@ vfr_manual_data = DataFile(os.path.join(__data_dir, "VfrManual"))
 vfr_manual = VfrManual(vfr_manual_data)
 
 dabs_dir = os.path.join(__data_dir, "DABS")
-dabs_data = DataFile(dabs_dir)
+dabs_data = DataFile(dabs_dir, datetime.timedelta(minutes=5))
 dabs = Dabs(dabs_data, dabs_dir)

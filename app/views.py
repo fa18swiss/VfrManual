@@ -1,6 +1,7 @@
 from app import app
 from .Data import *
 from flask import jsonify, send_file
+import datetime
 import mimetypes
 
 __app = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__))))
@@ -27,7 +28,7 @@ def ico():
 
 
 @app.route("/v1/vfrmanual/last")
-def last_v1():
+def vfrmanual_last_v1():
     vfr_manual.check()
     last = vfr_manual_data.last()
     return jsonify({
@@ -38,7 +39,7 @@ def last_v1():
 
 
 @app.route("/v1/vfrmanual/all")
-def all_v1():
+def vfrmanual_all_v1():
     vfr_manual.check()
     return jsonify({
         "LastCheck": vfr_manual_data.last_check(),
@@ -47,7 +48,42 @@ def all_v1():
 
 
 @app.route("/v1/vfrmanual/get/<date>/<lang>")
-def get_v1(date, lang):
+def vfrmanual_get_v1(date, lang):
     if not vfr_manual_data.contains(lang, date):
         return "Not found", 404
     return send_file(vfr_manual_data.path(lang, date), as_attachment=True)
+
+
+@app.route("/v1/dabs/all")
+def dabs_all_v1():
+    dabs.check()
+    return jsonify({
+        "LastCheck": dabs_data.last_check(),
+        "All": dabs_data.all()
+    })
+
+
+@app.route("/v1/dabs/last")
+def dabs_latest_v1():
+    date = datetime.date.today().isoformat()
+    return dabs_get_v1(date)
+
+
+@app.route("/v1/dabs/get/<date>")
+def dabs_get_v1(date):
+    dabs.check()
+    all_dabs = dabs_data.all()
+    if date in all_dabs:
+        versions = sorted([int(i) for i in all_dabs[date]])
+        if len(versions) > 0:
+            version = str(versions[-1])
+            return send_file(dabs_data.path(version, date), as_attachment=True)
+    return "Not found", 404
+
+
+@app.route("/v1/dabs/get/<date>/<version>")
+def dabs_get_full_v1(date, version):
+    dabs.check()
+    if not dabs_data.contains(version, date):
+        return "Not found", 404
+    return send_file(dabs_data.path(version, date), as_attachment=True)

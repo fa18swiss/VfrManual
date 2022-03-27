@@ -5,7 +5,6 @@ const CACHE_URLS = [
     '/',
     '/static/css/bootstrap.min.css',
     '/static/js/jquery.slim.min.js',
-    '/static/js/popper.min.js',
     '/static/js/bootstrap.min.js',
     '/static/svg/de.svg',
     '/static/svg/en.svg',

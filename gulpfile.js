@@ -25,12 +25,6 @@ function js_jquery() {
         .pipe(dest(dir_js));
 }
 
-function js_popper() {
-    return src("node_modules/popper.js/dist/umd/popper.min.js")
-        .pipe(removeSourcemaps())
-        .pipe(dest(dir_js));
-}
-
 function svg_flags_de() {
     return src("node_modules/svg-country-flags/svg/de.svg").pipe(dest(dir_svg));
 }
@@ -54,7 +48,7 @@ function clean() {
 
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);
-const js = parallel(js_bootstrap, js_jquery, js_popper);
+const js = parallel(js_bootstrap, js_jquery);
 const build = parallel(css, js, svg);
 
 exports.default = series(clean, build);

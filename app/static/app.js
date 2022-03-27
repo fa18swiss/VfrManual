@@ -18,9 +18,8 @@ async function app() {
     const request = window.indexedDB.open(DatabaseName, 2);
     request.onupgradeneeded = event => {
         const db = event.target.result;
-        console.log("onupgradeneeded", event)
-        if (event.oldVersion === 0) db.createObjectStore(VftTable);
-        if (event.oldVersion === 1) db.createObjectStore(DabsTable);
+        if (event.oldVersion < 1) db.createObjectStore(VftTable);
+        if (event.oldVersion < 2) db.createObjectStore(DabsTable);
     };
     db = await promiseReq(request);
     let dataVfrManual = await loadData(VftTable);
@@ -330,7 +329,6 @@ async function app() {
         e.preventDefault();
 
         const id = this.getAttribute("data-id");
-        console.log("id", this, id)
         const item = dataDabs.items[id];
         if (item.downloading) return false;
         item.downloading = true;
@@ -341,7 +339,7 @@ async function app() {
 
         item.hasFile = await downloadDabsNeeded(item);
         item.downloading = false;
-        await refreshDataVfrManual(true);
+        await refreshDataDabs(true);
 
         return false;
     }

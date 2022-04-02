@@ -3,6 +3,7 @@ import logging
 import requests
 from lxml import html
 from urllib.parse import urljoin
+from typing import Tuple
 from .DataFile import DataFile
 
 
@@ -73,3 +74,25 @@ class VfrManual:
         except Exception:
             self.__logger.exception("Fail to update", exc_info=True)
         return not self.data_file.need_update()
+
+    def cleanup(self):
+        if not self.data_file.need_cleanup():
+            self.__logger.debug("No cleanup need")
+            return
+        try:
+            limit = datetime.date.today() - datetime.timedelta(days=65)
+            self.__logger.info("clean limit %s", limit)
+            data = self.data_file.all()
+            to_delete: list[Tuple[str, str]] = list()
+            for key in data:
+                key_date = datetime.date.fromisoformat(key)
+                if key_date > limit:
+                    continue
+                for lang in data[key]:
+                    to_delete.append((key, lang))
+            for date, lang in to_delete:
+                self.data_file.remove(lang, date)
+                self.__logger.info("Remove date:%s lang:%s", date, lang)
+            self.data_file.cleanup()
+        except:
+            self.__logger.exception("Fail to update", exc_info=True)

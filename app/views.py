@@ -91,8 +91,20 @@ def dabs_get_full_v1(date, version):
 
 @app.route("/v1/HealthCheck")
 def health_check_v1():
+    vfr_manual.cleanup()
+    dabs.cleanup()
     vfr_manual_ok = vfr_manual.check()
     dabs_ok = dabs.check()
     if vfr_manual_ok and dabs_ok:
         return "Healthy", 200
     return "Unhealthy", 503
+
+
+@app.route("/v1/cleanup", methods=["DELETE"])
+def cleanup_v1():
+    vfr_manual.cleanup()
+    dabs.cleanup()
+    return jsonify({
+        "DABS": dabs_data.last_cleanup(),
+        "VfrManual": vfr_manual_data.last_cleanup()
+    })

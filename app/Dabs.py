@@ -50,6 +50,28 @@ class Dabs:
             self.__logger.exception("Fail to update", exc_info=True)
         return not self.data_file.need_update()
 
+    def cleanup(self):
+        if not self.data_file.need_cleanup():
+            self.__logger.debug("No cleanup need")
+            return
+        try:
+            limit = datetime.date.today() - datetime.timedelta(days=2)
+            self.__logger.info("clean limit %s", limit)
+            data = self.data_file.all()
+            to_delete: list[Tuple[str, str]] = list()
+            for key in data:
+                key_date = datetime.date.fromisoformat(key)
+                if key_date > limit:
+                    continue
+                for v in data[key]:
+                    to_delete.append((key, v))
+            for date, version in to_delete:
+                self.data_file.remove(version, date)
+                self.__logger.info("Remove date:%s version:%s", date, version)
+            self.data_file.cleanup()
+        except:
+            self.__logger.exception("Fail to update", exc_info=True)
+
     def __download(self, url: str) -> Optional[str]:
         try:
             res = requests.get(url)

@@ -25,10 +25,10 @@ class VfrManual:
         self.data_file = data_file
         self.__logger = logging.getLogger(__name__)
 
-    def check(self):
+    def check(self) -> bool:
         if not self.data_file.need_update():
             self.__logger.debug("No update need")
-            return
+            return True
         try:
             parseds = []
             for lang, url in self.__URLs.items():
@@ -72,3 +72,4 @@ class VfrManual:
 
         except Exception:
             self.__logger.exception("Fail to update", exc_info=True)
+        return not self.data_file.need_update()

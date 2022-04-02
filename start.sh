@@ -1,7 +1,7 @@
 #!/bin/bash
 
 app=vfrmanualapi
-ver=1.0.6
+ver=1.0.7
 tar="${app}_${ver}.tar"
 if test -f "$tar"; then
     echo "Loading $tar"

@@ -17,7 +17,7 @@ class Dabs:
     )
     __regex_date = re.compile("^DABS Date: (20[0-9]{2}) ([A-Z]{3}) ([0-9]?[1-9])")
     __regex_version = re.compile(r"^Version ([1-4]) -")
-    __months = ("JAN", "FEV", "MAR", "AVR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
+    __months = ("JAN", "FEV", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
     data_file: DataFile
     __logger: logging.Logger
     __path: str
@@ -27,10 +27,10 @@ class Dabs:
         self.__logger = logging.getLogger(__name__)
         self.__path = path
 
-    def check(self):
+    def check(self) -> bool:
         if not self.data_file.need_update():
             self.__logger.debug("No update need")
-            return
+            return True
         any_ok = False
         try:
             for url in self.__URLS:
@@ -48,6 +48,7 @@ class Dabs:
                 self.data_file.touch()
         except Exception:
             self.__logger.exception("Fail to update", exc_info=True)
+        return not self.data_file.need_update()
 
     def __download(self, url: str) -> Optional[str]:
         try:

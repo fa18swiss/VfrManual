@@ -87,3 +87,12 @@ def dabs_get_full_v1(date, version):
     if not dabs_data.contains(version, date):
         return "Not found", 404
     return send_file(dabs_data.path(version, date), as_attachment=True)
+
+
+@app.route("/v1/HealthCheck")
+def health_check_v1():
+    vfr_manual_ok = vfr_manual.check()
+    dabs_ok = dabs.check()
+    if vfr_manual_ok and dabs_ok:
+        return "Healthy", 200
+    return "Unhealthy", 503

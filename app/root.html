@@ -67,7 +67,24 @@
         overflow-y: scroll;
       }
       nav {
-        max-height: 56px;
+        height: 56px;
+      }
+      .navbar-brand {
+        margin: 0;
+      }
+      @media  (max-width: 400px) {
+        .navbar-brand {
+          font-size: 1rem;
+        }
+        .btn {
+          font-size: 0.9rem;
+          padding: 0.2rem 0.5rem;
+        }
+      }
+      @media  (max-width: 325px) {
+        .navbar-brand {
+          font-size: 0.8rem;
+        }
       }
     </style>
   </head>
@@ -75,16 +92,16 @@
   <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <button class="btn btn-outline-success" type="button" id="cmdRefreshVfrManual">Refresh</button>
-      <span class="navbar-brand mb-0">VFR Manual</span>
-      <span class="navbar-brand mb-0 h1" id="lastCheckVfrManual"></span>
+      <span class="navbar-brand">VFR Manual</span>
+      <span class="navbar-brand" id="lastCheckVfrManual"></span>
     </div>
   </nav>
   <div class="list-group dest" id="destVfrManual"></div>
   <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <button class="btn btn-outline-success" type="button" id="cmdRefreshDabs">Refresh</button>
-      <span class="navbar-brand mb-0">DABS</span>
-      <span class="navbar-brand mb-0 h1" id="lastCheckDabs">00.00.0000, 00:00:00</span>
+      <span class="navbar-brand">DABS</span>
+      <span class="navbar-brand" id="lastCheckDabs"></span>
     </div>
   </nav>
   <div class="list-group dest" id="destDabs"></div>

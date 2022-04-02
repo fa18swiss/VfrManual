@@ -312,7 +312,7 @@ async function app() {
             downloadLink.setAttribute("data-version", item.version);
             downloadLink.onclick = onDabsClick;
             const span = getOrCreate(downloadLink, "span");
-            span.textContent = new Date(item.date).toLocaleDateString() + " " + item.version;
+            span.textContent = new Date(item.date).toLocaleDateString() + " version " + item.version;
             const svg = getOrCreate(downloadLink, "svg");
             svg.outerHTML = item.hasFile ? BiArchive : BiCloud;
             destDabs.appendChild(downloadLink);

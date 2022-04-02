@@ -15,4 +15,4 @@ Write-Host "Saving..."
 docker image save -o "${app}_${version}.tar" $id
 Write-Host "Saved..."
 
-#docker run -d --name=vfrmanualapi -p 127.0.0.1:8003:80 --restart=always -v $pwd\data:/app/data -v $pwd\logs:/logs/ vfrmanualapi:1.0.7
+#docker run -d --name=vfrmanualapi -p 127.0.0.1:8003:80 --restart=always -v $pwd\data:/app/data -v $pwd\logs:/logs/ vfrmanualapi:1.0.8

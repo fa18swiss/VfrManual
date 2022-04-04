@@ -22,7 +22,15 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', event => {
-    event.waitUntil(self.clients.claim());
+    event.waitUntil(
+        caches.keys().then(function(keyList) {
+            return Promise.all(keyList.map(function(key) {
+                if (cacheName !== key) {
+                    return caches.delete(key);
+                }
+            }));
+        }).then(() => self.clients.claim())
+    );
 });
 
 self.addEventListener('fetch', event => {

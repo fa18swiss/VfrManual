@@ -23,4 +23,4 @@ Remove-Item $gz -ErrorAction Ignore
 Remove-Item $tar -ErrorAction Ignore
 Write-Host "Compressed..."
 
-#docker run -d --name=vfrmanualapi -p 127.0.0.1:8003:80 --restart=always -v $pwd\data:/app/data -v $pwd\logs:/logs/ vfrmanualapi:1.0.9
+#docker run -d --name=vfrmanualapi -p 127.0.0.1:8003:80 --restart=always -v $pwd\data:/app/data -v $pwd\logs:/logs/ vfrmanualapi:1.1.1

@@ -1,6 +1,7 @@
+from fastapi import HTTPException, Response, status
+from fastapi.responses import FileResponse, PlainTextResponse
 from app import app
 from .Data import *
-from flask import jsonify, send_file
 import datetime
 import mimetypes
 
@@ -12,99 +13,101 @@ __ico = os.path.join(__app, "static", "icon", "favicon.ico")
 mimetypes.add_type("application/javascript", ".js")
 
 
-@app.route("/")
-def index():
-    return send_file(__root)
+@app.get("/")
+async def index():
+    return FileResponse(__root)
 
 
-@app.route("/sw.js")
-def sw():
-    return send_file(__sw)
+@app.get("/sw.js")
+async def sw():
+    return FileResponse(__sw)
 
 
-@app.route("/favicon.ico")
-def ico():
-    return send_file(__ico)
+@app.get("/favicon.ico")
+async def ico():
+    return FileResponse(__ico)
 
 
-@app.route("/v1/vfrmanual/last")
-def vfrmanual_last_v1():
+@app.get("/v1/vfrmanual/last")
+async def vfrmanual_last_v1():
     vfr_manual.check()
     last = vfr_manual_data.last()
-    return jsonify({
+    return {
         "LastCheck": vfr_manual_data.last_check(),
         "Last": last[0],
         "Langs": last[1],
-    })
+    }
 
 
-@app.route("/v1/vfrmanual/all")
-def vfrmanual_all_v1():
+@app.get("/v1/vfrmanual/all")
+async def vfrmanual_all_v1():
     vfr_manual.check()
-    return jsonify({
+    return {
         "LastCheck": vfr_manual_data.last_check(),
         "All": vfr_manual_data.all()
-    })
+    }
 
 
-@app.route("/v1/vfrmanual/get/<date>/<lang>")
-def vfrmanual_get_v1(date, lang):
+@app.get("/v1/vfrmanual/get/{date}/{lang}")
+async def vfrmaual_get_v1(date, lang):
+    print("vfrmaual_get_v1 %s %s" % (date, lang))
     if not vfr_manual_data.contains(lang, date):
-        return "Not found", 404
-    return send_file(vfr_manual_data.path(lang, date), as_attachment=True)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return FileResponse(vfr_manual_data.path(lang, date))
 
 
-@app.route("/v1/dabs/all")
-def dabs_all_v1():
+@app.get("/v1/dabs/all")
+async def dabs_all_v1():
     dabs.check()
-    return jsonify({
+    return {
         "LastCheck": dabs_data.last_check(),
         "All": dabs_data.all()
-    })
+    }
 
 
-@app.route("/v1/dabs/last")
-def dabs_latest_v1():
+@app.get("/v1/dabs/last")
+async def dabs_latest_v1():
     date = datetime.date.today().isoformat()
     return dabs_get_v1(date)
 
 
-@app.route("/v1/dabs/get/<date>")
-def dabs_get_v1(date):
+@app.get("/v1/dabs/get/{date}")
+async def dabs_get_v1(date):
     dabs.check()
     all_dabs = dabs_data.all()
     if date in all_dabs:
         versions = sorted([int(i) for i in all_dabs[date]])
         if len(versions) > 0:
             version = str(versions[-1])
-            return send_file(dabs_data.path(version, date), as_attachment=True)
-    return "Not found", 404
+            return FileResponse(dabs_data.path(version, date))
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 
-@app.route("/v1/dabs/get/<date>/<version>")
-def dabs_get_full_v1(date, version):
+@app.get("/v1/dabs/get/{date}/{version}")
+async def dabs_get_full_v1(date, version):
     dabs.check()
     if not dabs_data.contains(version, date):
-        return "Not found", 404
-    return send_file(dabs_data.path(version, date), as_attachment=True)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return FileResponse(dabs_data.path(version, date))
 
 
-@app.route("/v1/HealthCheck")
-def health_check_v1():
+@app.get("/v1/HealthCheck", response_class=PlainTextResponse)
+async def health_check_v1(response: Response):
     vfr_manual.cleanup()
     dabs.cleanup()
     vfr_manual_ok = vfr_manual.check()
     dabs_ok = dabs.check()
     if vfr_manual_ok and dabs_ok:
-        return "Healthy", 200
-    return "Unhealthy", 503
+        return "Healthy"
+    response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return "Unhealthy"
 
 
-@app.route("/v1/cleanup", methods=["DELETE"])
-def cleanup_v1():
+@app.delete("/v1/cleanup")
+async def cleanup_v1():
     vfr_manual.cleanup()
     dabs.cleanup()
-    return jsonify({
+    return {
         "DABS": dabs_data.last_cleanup(),
         "VfrManual": vfr_manual_data.last_cleanup()
-    })
+    }

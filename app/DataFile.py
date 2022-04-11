@@ -17,11 +17,8 @@ class DataFile:
     __last_cleanup: datetime.datetime
     __logger: logging.Logger
 
-    def __init__(self, directory: str, delta: datetime.timedelta = None, cleanup_delta: datetime.timedelta = None, extension: str = ".pdf"):
-        if delta is None:
-            delta = datetime.timedelta(hours=1)
-        if cleanup_delta is None:
-            cleanup_delta = datetime.timedelta(days=1)
+    def __init__(self, directory: str, delta: datetime.timedelta, cleanup_delta: datetime.timedelta,
+                 extension: str = ".pdf"):
         self.__logger = logging.getLogger(__name__)
         self.__dir = directory
         self.__extension = extension
@@ -116,8 +113,10 @@ class DataFile:
         return DateUtils.to_string(self.__last_cleanup)
 
     def need_update(self) -> bool:
-        self.__logger.debug("Delta is %s", self.delta)
-        return self.__last_check + self.delta < DateUtils.utc_now()
+        next_check = self.__last_check + self.delta
+        self.__logger.debug("__last_check:'%s' delta:'%s' next_check:'%s' now:'%s'", self.__last_check, self.delta,
+                            next_check, DateUtils.utc_now())
+        return next_check < DateUtils.utc_now()
 
     def need_cleanup(self) -> bool:
         self.__logger.debug("Cleanup delta is %s", self.cleanup_delta)

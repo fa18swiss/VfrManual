@@ -3,6 +3,12 @@
 app=vfrmanualapi
 ver=1.0.9
 tar="${app}_${ver}.tar"
+gz="${tar}.gz"
+if test -f "$gz"; then
+    echo "Unzip $gz"
+    gzip -d $gz
+    echo "Unzipped $gz"
+fi
 if test -f "$tar"; then
     echo "Loading $tar"
     docker load -i $tar

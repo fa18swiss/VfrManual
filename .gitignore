@@ -7,3 +7,4 @@
 /app/static/js/*.min.js
 /app/static/svg
 *.tar
+*.gz

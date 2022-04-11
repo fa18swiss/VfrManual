@@ -12,6 +12,7 @@ fi
 if test -f "$tar"; then
     echo "Loading $tar"
     docker load -i $tar
+    rm "$tar"
     echo "Loaded $tar"
 fi
 

@@ -80,7 +80,7 @@ class VfrManual:
             self.__logger.debug("No cleanup need")
             return
         try:
-            limit = datetime.date.today() - datetime.timedelta(days=65)
+            limit = datetime.date.today() - datetime.timedelta(days=35)
             self.__logger.info("clean limit %s", limit)
             data = self.data_file.all()
             to_delete: list[Tuple[str, str]] = list()

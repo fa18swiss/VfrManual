@@ -55,13 +55,13 @@ class Dabs:
             self.__logger.debug("No cleanup need")
             return
         try:
-            limit = datetime.date.today() - datetime.timedelta(days=1)
+            limit = datetime.date.today()
             self.__logger.info("clean limit %s", limit)
             data = self.data_file.all()
             to_delete: list[Tuple[str, str]] = list()
             for key in data:
                 key_date = datetime.date.fromisoformat(key)
-                if key_date > limit:
+                if key_date >= limit:
                     continue
                 for v in data[key]:
                     to_delete.append((key, v))

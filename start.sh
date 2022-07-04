@@ -1,7 +1,7 @@
 #!/bin/bash
 
 app=vfrmanualapi
-ver=1.1.2
+ver=1.1.3
 tar="${app}_${ver}.tar"
 gz="${tar}.gz"
 if test -f "$gz"; then

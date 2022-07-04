@@ -12,7 +12,7 @@ $gz = "${tar}.gz"
 Write-Host "Building $id"
 
 docker rmi $id
-docker build -t $id .
+docker build --no-cache -t $id .
 docker tag $id $app
 
 Write-Host "Saving..."

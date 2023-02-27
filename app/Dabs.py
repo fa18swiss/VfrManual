@@ -92,11 +92,11 @@ class Dabs:
             version: Optional[int] = None
             date: Optional[datetime.date] = None
             with open(src_path, 'rb') as pdfFileObj:
-                pdf_reader = PyPDF2.PdfFileReader(pdfFileObj)
-                if pdf_reader.getNumPages() < 2:
+                pdf_reader = PyPDF2.PdfReader(pdfFileObj)
+                if len(pdf_reader.pages) < 2:
                     return None
-                page_obj = pdf_reader.getPage(1)
-                text = page_obj.extractText()
+                page_obj = pdf_reader.pages[1]
+                text = page_obj.extract_text()
                 for line in text.splitlines():
                     find_date = self.__regex_date.search(line)
                     find_version = self.__regex_version.search(line)

@@ -1,4 +1,4 @@
-const version = "1.1.3";
+const version = "1.1.4";
 const cacheName = `vfrmanual-${version}`;
 
 const CACHE_URLS = [

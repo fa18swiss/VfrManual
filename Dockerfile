@@ -1,4 +1,4 @@
-FROM python:3.11.2-alpine
+FROM python:3.11.4-alpine
 EXPOSE 80/tcp
 
 RUN apk --no-cache add curl

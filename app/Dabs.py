@@ -1,7 +1,7 @@
 import datetime
 import logging
 import os
-import PyPDF2
+import pypdf
 import re
 import requests
 from typing import Optional, Tuple
@@ -92,7 +92,7 @@ class Dabs:
             version: Optional[int] = None
             date: Optional[datetime.date] = None
             with open(src_path, 'rb') as pdfFileObj:
-                pdf_reader = PyPDF2.PdfReader(pdfFileObj)
+                pdf_reader = pypdf.PdfReader(pdfFileObj)
                 if len(pdf_reader.pages) < 2:
                     return None
                 page_obj = pdf_reader.pages[1]

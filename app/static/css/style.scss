@@ -1,0 +1,103 @@
+@use 'sass:color';
+$navbar-height: 56px;
+
+.dest{
+  height: calc(100vh - $navbar-height);
+  overflow-y: scroll;
+  a{
+    svg  {
+      float: right;
+      font-size: 1.5em;
+    }
+    img {
+      width:30px;
+      height:20px;
+      margin-right: 10px;
+      object-fit: fill;
+    }
+  }
+}
+
+nav {
+  height: $navbar-height;
+}
+.navbar-brand {
+  margin: 0;
+}
+.navbar-brand.right {
+  font-size: 15px;
+}
+section {
+  width:50%;
+  float:left;
+}
+.btn span[role=status] {
+  margin-right:3px;
+}
+.inop {
+  $inop-color-1: red;
+  $inop-color-2: color.scale($inop-color-1, $lightness: 50%);
+  $inop-color-alpha: 0.5;
+  $inop-color-1: color.change($inop-color-1, $alpha: $inop-color-alpha);
+  $inop-color-2: color.change($inop-color-2, $alpha: $inop-color-alpha);
+  $inop-color-size: 5px;
+  $inop-text-color: #FFF;
+  $inop-text-border-color:#000;
+  $inop-text-border-size:1px;
+  @mixin fullSize {
+    display:table-cell;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left: 0;
+    right: 0;
+  }
+  position:relative;
+  &::before {
+    @include fullSize;
+    content: " ";
+
+    z-index: 1000;
+    background: repeating-linear-gradient(
+                    -45deg,
+                    $inop-color-1,
+                    $inop-color-1 $inop-color-size,
+                    $inop-color-2 $inop-color-size,
+                    $inop-color-2 $inop-color-size * 2
+    );
+  }
+  &::after{
+    @include fullSize;
+    z-index: 1001;
+    color:white;
+    text-shadow: (-$inop-text-border-size) 0 $inop-text-border-color, 0 $inop-text-border-size $inop-text-border-color,
+                $inop-text-border-size 0 $inop-text-border-color, 0 (-$inop-text-border-size) $inop-text-border-color;
+    font-size: 40px;
+    font-weight: bold;
+    content:"INOP";
+    text-align: center;
+  }
+}
+@media  (max-width: 700px) {
+  section {
+    width:100%;
+    float:none;
+  }
+  .dest{
+    height: calc(50vh - $navbar-height);
+  }
+}
+@media  (max-width: 400px) {
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+@media  (max-width: 325px) {
+  .navbar-brand {
+    font-size: 0.8rem;
+  }
+}

@@ -5,6 +5,7 @@ const CACHE_URLS = [
     '/',
     '/static/app.js',
     '/static/css/bootstrap.min.css',
+    '/static/css/style.min.css',
     '/static/icon/android-chrome-192x192.png',
     '/static/icon/android-chrome-512x512.png',
     '/static/icon/apple-touch-icon.png',

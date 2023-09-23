@@ -10,7 +10,9 @@
     "gulp": "^4.0.2",
     "gulp-modify-file": "^1.0.1",
     "gulp-rename": "^2.0.0",
+    "gulp-sass": "^5.1.0",
     "jquery": "^3.7.1",
+    "sass": "^1.68.0",
     "svg-country-flags": "^1.2.10"
   }
 }

@@ -112,6 +112,7 @@ async function app() {
             await refreshDataVfrManual(true);
         } catch (e) {
             console.error("Fail to get last files", e);
+            manageVfrManualDate();
         }
         loading(cmdRefreshVfrManual, false);
     }
@@ -191,11 +192,15 @@ async function app() {
         }
     }
 
+    function manageVfrManualDate() {
+        manageDate(destVfrManual, lastCheckVfrManual, dataVfrManual.LastCheck)
+    }
+
     async function refreshDataVfrManual(save) {
         if (save) {
             await promiseReq(write(VftTable).put(dataVfrManual, Data));
         }
-        lastCheckVfrManual.textContent = dataVfrManual.LastCheck ? new Date(dataVfrManual.LastCheck).toLocaleString() : "N/A";
+        manageVfrManualDate();
         for (let id in dataVfrManual.items) {
             if (!dataVfrManual.items.hasOwnProperty(id)) continue;
             let item = dataVfrManual.items[id];
@@ -286,14 +291,21 @@ async function app() {
             await refreshDataDabs(true);
         } catch (e) {
             console.error("Fail to get last files", e);
+            manageDabsDate();
         }
         loading(cmdRefreshDabs, false);
+    }
+
+
+    function manageDabsDate() {
+        manageDate(destDabs, lastCheckDabs, dataDabs.LastCheck);
     }
 
     async function refreshDataDabs(save) {
         if (save) {
             await promiseReq(write(DabsTable).put(dataDabs, Data));
         }
+        manageDabsDate();
         lastCheckDabs.textContent = dataDabs.LastCheck ? new Date(dataDabs.LastCheck).toLocaleString() : "N/A";
         for (let id in dataDabs.items) {
             if (!dataDabs.items.hasOwnProperty(id)) continue;
@@ -359,6 +371,22 @@ async function app() {
             return false;
         }
     }
+
+    function manageDate(dst, lastCheckElement, lastCheck) {
+        let ok, date;
+        if (lastCheck) {
+            date = new Date(lastCheck);
+            ok = (new Date() - date) < (3 * 60 * 60 * 1000) // 3 jours
+            console.log("manageDate", date, ok, new Date() - date)
+            date = date.toLocaleString();
+        } else{
+            ok = false;
+            date = "N/A";
+        }
+        lastCheckElement.textContent = date;
+        dst.classList.toggle("inop", !ok);
+    }
+
     function loading(element, isLoading){
         element.disabled = isLoading
         if (isLoading)  {

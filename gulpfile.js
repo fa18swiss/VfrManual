@@ -1,17 +1,33 @@
-const { src, dest, series, parallel } = require("gulp");
+const { src, dest, series, parallel, watch } = require("gulp");
 const del = require("del");
 const rename = require("gulp-rename");
 const removeSourcemaps = require("./gulp-remove-sourcemap");
 const modifyFile = require('gulp-modify-file')
 const fs = require("fs");
+const sass = require('gulp-sass')(require('sass'));
 
 const dir_css = "app/static/css/";
 const dir_js = "app/static/js/";
 const dir_svg = "app/static/svg/";
+const file_scss = dir_css + "style.scss"
 
-function css() {
+
+function bootstrap_css() {
     return src("node_modules/bootstrap/dist/css/bootstrap.min.css")
         .pipe(removeSourcemaps())
+        .pipe(dest(dir_css));
+}
+function scss() {
+    return src(file_scss)
+        .pipe(sass({
+            outputStyle: 'compressed',
+        }).on("error", sass.logError))
+
+        .pipe(
+            rename(function (file) {
+                file.basename = file.basename + ".min";
+            })
+        )
         .pipe(dest(dir_css));
 }
 
@@ -56,7 +72,7 @@ function readFiles(path, res) {
         let item = `${path}/${it.name}`
         if (it.isDirectory()){
             readFiles(item, res)
-        } else {
+        } else if (!item.endsWith(".scss")) {
             res.push(item)
         }
     }
@@ -81,7 +97,7 @@ function swPath() {
         }))
         .pipe(dest('app'))
 }
-
+const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);
 const js = parallel(js_bootstrap, js_jquery);
@@ -90,3 +106,4 @@ const build = series(parallel(css, js, svg), swPath);
 exports.default = series(clean, build);
 exports.build = build;
 exports.clean = clean;
+exports.watch = _ => watch(file_scss, scss)

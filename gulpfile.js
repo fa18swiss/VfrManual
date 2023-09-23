@@ -59,7 +59,7 @@ function readFiles(path, res) {
         } else {
             res.push(item)
         }
-    };
+    }
     return res
 }
 

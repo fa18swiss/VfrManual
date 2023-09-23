@@ -3,7 +3,10 @@ gulp clean
 gulp build
 
 $app = "vfrmanualapi"
-$version = Get-content .\app\sw.js | select-string "version = ""([0-9\.]+)"""  | % { $_.Matches } | % { $_.Groups[1].Value }
+$version = Get-content .\app\sw.js `
+    | Select-String "version = ""([0-9\.]+)""" `
+    | ForEach-Object { $_.Matches } `
+    | ForEach-Object { $_.Groups[1].Value }
 
 $id = "${app}:${version}"
 $tar = "${app}_${version}.tar"

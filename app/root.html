@@ -43,10 +43,10 @@
       } else {
           navigator.serviceWorker.register('/sw.js', { scope: './' })
               .then(function(registration) {
-                  console.log('Service Worker Registered');
+                  console.log('Service Worker Registered', registration);
               });
           navigator.serviceWorker.ready.then(function(registration) {
-              console.log('Service Worker Ready');
+              console.log('Service Worker Ready', registration);
           });
       }
     </script>
@@ -63,7 +63,7 @@
         object-fit: fill;
       }
       .dest {
-        height: calc(50vh - 56px);
+        height: calc(100vh - 56px);
         overflow-y: scroll;
       }
       nav {
@@ -71,6 +71,22 @@
       }
       .navbar-brand {
         margin: 0;
+      }
+      .navbar-brand.right {
+        font-size: 15px;
+      }
+      section {
+        width:50%;
+        float:left;
+      }
+      @media  (max-width: 700px) {
+        section {
+          width:100%;
+          float:none;
+        }
+        .dest{
+          height: calc(50vh - 56px);
+        }
       }
       @media  (max-width: 400px) {
         .navbar-brand {
@@ -89,21 +105,25 @@
     </style>
   </head>
   <body>
-  <nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-      <button class="btn btn-outline-success" type="button" id="cmdRefreshVfrManual">Refresh</button>
-      <span class="navbar-brand">VFR Manual</span>
-      <span class="navbar-brand" id="lastCheckVfrManual"></span>
-    </div>
-  </nav>
-  <div class="list-group dest" id="destVfrManual"></div>
-  <nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-      <button class="btn btn-outline-success" type="button" id="cmdRefreshDabs">Refresh</button>
-      <span class="navbar-brand">DABS</span>
-      <span class="navbar-brand" id="lastCheckDabs"></span>
-    </div>
-  </nav>
-  <div class="list-group dest" id="destDabs"></div>
+  <section>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <button class="btn btn-outline-success" type="button" id="cmdRefreshVfrManual">Refresh</button>
+        <span class="navbar-brand">VFR Manual</span>
+        <span class="navbar-brand right" id="lastCheckVfrManual"></span>
+      </div>
+    </nav>
+    <div class="list-group dest" id="destVfrManual"></div>
+  </section>
+  <section>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <button class="btn btn-outline-success" type="button" id="cmdRefreshDabs">Refresh</button>
+        <span class="navbar-brand">DABS</span>
+        <span class="navbar-brand right" id="lastCheckDabs"></span>
+      </div>
+    </nav>
+    <div class="list-group dest" id="destDabs"></div>
+  </section>
   </body>
 </html>

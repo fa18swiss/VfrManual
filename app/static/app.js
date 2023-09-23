@@ -14,6 +14,8 @@ async function app() {
     const lastCheckVfrManual = document.getElementById("lastCheckVfrManual");
     const destDabs = document.getElementById("destDabs");
     const lastCheckDabs = document.getElementById("lastCheckDabs");
+    const cmdRefreshVfrManual = document.getElementById("cmdRefreshVfrManual");
+    const cmdRefreshDabs = document.getElementById("cmdRefreshDabs");
 
     const request = window.indexedDB.open(DatabaseName, 2);
     request.onupgradeneeded = event => {
@@ -27,8 +29,7 @@ async function app() {
 
     await refreshDataVfrManual(false);
     await refreshDataDabs(false);
-    await checkLastVfrManual();
-    await checkLastDabs();
+    await Promise.all([checkLastVfrManual(), checkLastDabs()]);
 
     function get(url, responseType) {
         return new Promise(function (resolve, reject) {
@@ -81,6 +82,7 @@ async function app() {
     async function checkLastVfrManual(e) {
         if (e) e.preventDefault();
         try {
+            loading(cmdRefreshVfrManual, true);
             let res = await get("/v1/vfrmanual/all", "json");
 
             const ids = Object.keys(dataVfrManual.items);
@@ -111,6 +113,7 @@ async function app() {
         } catch (e) {
             console.error("Fail to get last files", e);
         }
+        loading(cmdRefreshVfrManual, false);
     }
     function promiseReq(req) {
         return new Promise((resolve, reject) => {
@@ -253,6 +256,7 @@ async function app() {
     async function checkLastDabs(e) {
         if (e) e.preventDefault();
         try {
+            loading(cmdRefreshDabs, true);
             let res = await get("/v1/dabs/all", "json");
 
             const ids = Object.keys(dataDabs.items);
@@ -283,6 +287,7 @@ async function app() {
         } catch (e) {
             console.error("Fail to get last files", e);
         }
+        loading(cmdRefreshDabs, false);
     }
 
     async function refreshDataDabs(save) {
@@ -354,9 +359,23 @@ async function app() {
             return false;
         }
     }
+    function loading(element, isLoading){
+        element.disabled = isLoading
+        if (isLoading)  {
+            const span = document.createElement("span");
+            span.setAttribute("class", "spinner-border spinner-border-sm");
+            span.setAttribute("role", "status");
+            span.setAttribute("aria-hidden", "true");
+            element.prepend(span)
+        } else {
+            for (const elem of element.querySelectorAll("span")) {
+                elem.remove();
+            }
+        }
+    }
 
-    document.getElementById("cmdRefreshVfrManual").onclick = checkLastVfrManual;
-    document.getElementById("cmdRefreshDabs").onclick = checkLastDabs;
+    cmdRefreshVfrManual.onclick = checkLastVfrManual;
+    cmdRefreshDabs.onclick = checkLastDabs;
 }
 
 window.onload = app;

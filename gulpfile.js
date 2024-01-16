@@ -79,7 +79,7 @@ function readFiles(path, res) {
     return res
 }
 
-function swPath() {
+function swJs() {
     return src("app/sw.js")
         .pipe(modifyFile(content => {
             let files = readFiles("app/static");
@@ -95,13 +95,28 @@ function swPath() {
             }
             return `${res}${crlf}${content.substring(p2)}`;
         }))
+        .pipe(modifyFile(content => {
+            const package = require('./package.json');
+            return content.replace(/version = \"([0-9\.]+)\"/, `version = "${package.version}"`)
+        }))
         .pipe(dest('app'))
 }
+
+function startSh() {
+    return src("start.sh")
+    .pipe(modifyFile(content => {
+        const package = require('./package.json');
+        return content.replace(/ver=([0-9\.]+)/, `ver=${package.version}`).replace(/\r/g, '');
+    }))
+    .pipe(dest('.'))
+
+}
+
 const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);
 const js = parallel(js_bootstrap, js_jquery);
-const build = series(parallel(css, js, svg), swPath);
+const build = series(parallel(css, js, svg), parallel(swJs, startSh));
 
 exports.default = series(clean, build);
 exports.build = build;

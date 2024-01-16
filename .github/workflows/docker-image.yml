@@ -1,0 +1,59 @@
+name: Docker Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_IMAGE_NAME: vfrmanualapi
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set version output
+      id: version
+      run: | 
+        echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+    - name: Check version
+      env:
+        tag: ${{ steps.version.outputs.tag }}
+        version: ${{ steps.version.outputs.version }}
+        version_format: ${{ format('v{0}', steps.version.outputs.version) }}
+      if: ${{ env.tag != env.version_format }}
+      run: |
+        echo invalid version tag:$tag version:$version version_format:$version_format
+        exit 1
+
+    - name: Install dependencies with Yarn and Gulp
+      run: | 
+        yarn install
+        gulp clean
+        gulp build
+
+
+    - name: Build Docker image
+      run: docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ steps.version.outputs.version }} .
+
+    - name: Extract Docker image
+      run: docker save ${{ env.DOCKER_IMAGE_NAME }}:${{ steps.version.outputs.version }} | gzip -c > ${{ env.DOCKER_IMAGE_NAME }}_${{ steps.version.outputs.version }}.tar.gz
+
+    - name: Create draft release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.tag }}
+        name: Version ${{ steps.version.outputs.version }}
+        draft: true
+        fail_on_unmatched_files: true
+        body: |
+          Description of the release.
+        files: |
+          ${{ env.DOCKER_IMAGE_NAME }}_${{ steps.version.outputs.version }}.tar.gz
+          start.sh

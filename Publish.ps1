@@ -13,7 +13,7 @@ Write-Host "Version : $version"
 $root = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($MyInvocation.MyCommand.Path, ".."))
 
 $start = [System.IO.Path]::Combine($root, "start.sh")
-$txt = [System.IO.File]::ReadAllText($start)
+$txt = [System.IO.File]::ReadAllText($start).Replace("`r`n", "`n")
 $txt = [System.Text.RegularExpressions.Regex]::Replace($txt, "ver=([0-9\.]+)", "ver=$version")
 [System.IO.File]::WriteAllText($start, $txt)
 

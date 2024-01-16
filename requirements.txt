@@ -1,5 +1,5 @@
-fastapi==0.105.0
-uvicorn==0.24.0.post1
+fastapi==0.109.0
+uvicorn==0.25.0
 requests==2.31.0
-lxml==4.9.3
-pypdf==3.17.3
+lxml==5.1.0
+pypdf==3.17.4

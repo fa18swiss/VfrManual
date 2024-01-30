@@ -95,13 +95,6 @@ function swJs() {
         .pipe(dest("app"))
 }
 
-function startSh() {
-    return src("start.sh")
-        .pipe(replace(/ver=([\d\.]+)/, `ver=${package.version}`))
-        .pipe(replace("\r", ""))
-        .pipe(dest("."));
-}
-
 const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);

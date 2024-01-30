@@ -1,26 +1,31 @@
 #!/bin/bash
 
 app=vfrmanualapi
-ver=1.3.1
+ver=$(curl --silent  https://api.github.com/repos/fa18swiss/VfrManual/releases/latest | awk -F'"' '/tag_name/{gsub(/^./,"",$4); print $4}')
+img="${app}:${ver}"
 tar="${app}_${ver}.tar"
 gz="${tar}.gz"
-if test -f "$gz"; then
-    echo "Unzip $gz"
-    gzip -d $gz
-    echo "Unzipped $gz"
-fi
-if test -f "$tar"; then
-    echo "Loading $tar"
-    docker load -i $tar
-    rm "$tar"
-    echo "Loaded $tar"
+
+echo "Image : ${img}"
+
+if docker images --format '{{.Repository}}:{{.Tag}}' | grep -q "^${img}$"; then
+	echo "Docker image ${img} found locally"
+else
+	echo "Docker image ${img} not found locally, downloading"
+	wget "https://github.com/fa18swiss/VfrManual/releases/download/v${ver}/vfrmanualapi_${ver}.tar.gz"
+	echo "Download done, unzip ${gz}"
+	gzip -d $gz
+	echo "Unzip done, loading"
+	docker load -i $tar
+	rm "${tar}"
+	echo "Loaded ${tar}"
 fi
 
 
 docker stop $app
-echo "Stopped $app"
+echo "Stopped ${app}"
 docker rm $app
-echo "Deleted $app"
+echo "Deleted ${app}"
 docker run \
 	-d \
 	--name=$app \
@@ -28,5 +33,5 @@ docker run \
 	--restart=always \
 	-v $(pwd)/data:/app/data \
 	-v $(pwd)/logs:/logs/ \
-	$app:$ver
-echo "Started $app:$ver"
+	$img
+echo "Started ${img}"

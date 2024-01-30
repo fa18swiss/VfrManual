@@ -18,5 +18,5 @@
     "background_color": "#ffffff",
     "lang": "en",
     "start_url": "/",
-    "display": "fullscreen"
+    "display": "standalone"
 }

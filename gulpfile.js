@@ -1,10 +1,12 @@
 const { src, dest, series, parallel, watch } = require("gulp");
 const del = require("del");
+const { EOL } = require("os");
 const rename = require("gulp-rename");
+const replace = require("gulp-replace");
 const removeSourcemaps = require("./gulp-remove-sourcemap");
-const modifyFile = require('gulp-modify-file')
 const fs = require("fs");
-const sass = require('gulp-sass')(require('sass'));
+const package = require("./package.json");
+const sass = require("gulp-sass")(require("sass"));
 
 const dir_css = "app/static/css/";
 const dir_js = "app/static/js/";
@@ -20,9 +22,8 @@ function bootstrap_css() {
 function scss() {
     return src(file_scss)
         .pipe(sass({
-            outputStyle: 'compressed',
+            outputStyle: "compressed",
         }).on("error", sass.logError))
-
         .pipe(
             rename(function (file) {
                 file.basename = file.basename + ".min";
@@ -80,36 +81,25 @@ function readFiles(path, res) {
 }
 
 function swJs() {
+    let files = readFiles("app/static");
+    files.push("app/")
+    files.sort();
+    let res = "";
+    for (let i = 0; i < files.length; i++) {
+        res = `${res}${i === 0 ? "" : ","}${EOL}    '${files[i].substring(3)}'`;
+    }
+    res = `${res}${EOL}`
     return src("app/sw.js")
-        .pipe(modifyFile(content => {
-            let files = readFiles("app/static");
-            files.push("app/")
-            files.sort();
-            let p1 = content.indexOf("CACHE_URLS = [") + 14;
-            let crlf = content.substring(p1, p1 + 2);
-            if (crlf[1] === " ") crlf = crlf.substring(0, 1);
-            let p2 = content.indexOf("]", p1);
-            let res = content.substring(0, p1);
-            for (let i = 0; i < files.length; i++) {
-                res = `${res}${i === 0 ? "" : ","}${crlf}    '${files[i].substring(3)}'`;
-            }
-            return `${res}${crlf}${content.substring(p2)}`;
-        }))
-        .pipe(modifyFile(content => {
-            const package = require('./package.json');
-            return content.replace(/version = \"([0-9\.]+)\"/, `version = "${package.version}"`)
-        }))
-        .pipe(dest('app'))
+        .pipe(replace(/(const CACHE_URLS = \[)([\s\S]+)(\];)/, `$1${res}$3`))
+        .pipe(replace(/version = \"([\d\.]+)\"/, `version = "${package.version}"`))
+        .pipe(dest("app"))
 }
 
 function startSh() {
     return src("start.sh")
-    .pipe(modifyFile(content => {
-        const package = require('./package.json');
-        return content.replace(/ver=([0-9\.]+)/, `ver=${package.version}`).replace(/\r/g, '');
-    }))
-    .pipe(dest('.'))
-
+        .pipe(replace(/ver=([\d\.]+)/, `ver=${package.version}`))
+        .pipe(replace("\r", ""))
+        .pipe(dest("."));
 }
 
 const css = parallel(bootstrap_css, scss);

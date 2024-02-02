@@ -8,6 +8,7 @@ async function app() {
     const BiCloud = '<svg class="bi bi-cloud" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.887 9.2l-.964-.165A2.5 2.5 0 105.5 14h10a1.5 1.5 0 00.237-2.982l-1.038-.164.216-1.028a4 4 0 10-7.843-1.587l-.185.96zm9.084.341a5 5 0 00-9.88-1.492A3.5 3.5 0 105.5 15h9.999a2.5 2.5 0 00.394-4.968c.033-.16.06-.324.077-.49z" clip-rule="evenodd"/></svg>';
     const BiArchive = '<svg class="bi bi-archive" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 7v7.5c0 .864.642 1.5 1.357 1.5h9.286c.715 0 1.357-.636 1.357-1.5V7h1v7.5c0 1.345-1.021 2.5-2.357 2.5H5.357C4.021 17 3 15.845 3 14.5V7h1z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M7.5 9.5A.5.5 0 018 9h4a.5.5 0 010 1H8a.5.5 0 01-.5-.5zM17 4H3v2h14V4zM3 3a1 1 0 00-1 1v2a1 1 0 001 1h14a1 1 0 001-1V4a1 1 0 00-1-1H3z" clip-rule="evenodd"/></svg>';
     const BiArrowRepeat = '<svg class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4 9.5a.5.5 0 00-.5.5 6.5 6.5 0 0012.13 3.25.5.5 0 00-.866-.5A5.5 5.5 0 014.5 10a.5.5 0 00-.5-.5z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M4.354 9.146a.5.5 0 00-.708 0l-2 2a.5.5 0 00.708.708L4 10.207l1.646 1.647a.5.5 0 00.708-.708l-2-2zM15.947 10.5a.5.5 0 00.5-.5 6.5 6.5 0 00-12.13-3.25.5.5 0 10.866.5A5.5 5.5 0 0115.448 10a.5.5 0 00.5.5z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M18.354 8.146a.5.5 0 00-.708 0L16 9.793l-1.646-1.647a.5.5 0 00-.708.708l2 2a.5.5 0 00.708 0l2-2a.5.5 0 000-.708z" clip-rule="evenodd"/></svg>';
+    const BiExclamationTriangleFill = '<svg class="bi bi-exclamation-triangle-fill" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>'
     let db;
 
     const destVfrManual = document.getElementById("destVfrManual");
@@ -16,6 +17,9 @@ async function app() {
     const lastCheckDabs = document.getElementById("lastCheckDabs");
     const cmdRefreshVfrManual = document.getElementById("cmdRefreshVfrManual");
     const cmdRefreshDabs = document.getElementById("cmdRefreshDabs");
+
+    addInop(destVfrManual);
+    addInop(destDabs);
 
     const request = window.indexedDB.open(DatabaseName, 2);
     request.onupgradeneeded = event => {
@@ -56,6 +60,20 @@ async function app() {
             };
             xhr.send();
         });
+    }
+
+    function addInop(dst){
+        const inop = document.createElement('div');
+        inop.setAttribute("data-id", "inop");
+        const fakeItem = {};
+        inop.setAttribute("class", itemCls(fakeItem) + " list-group-item-danger inopDescr");
+        const svg = document.createElement("svg")
+        inop.appendChild(svg)
+        svg.outerHTML = BiExclamationTriangleFill;
+        const span = document.createElement("span")
+        inop.appendChild(span)
+        span.textContent = " Fail to get latest data, use with caution";
+        dst.appendChild(inop)
     }
 
     async function loadData(table){
@@ -157,6 +175,7 @@ async function app() {
         for (let i = 0; i < divs.length; i++) {
             const item = divs.item(i);
             const itemId = item.getAttribute("data-id");
+            if (itemId === "inop") continue;
             if (itemId in data.items) {
                 listItems.push(item);
             } else {
@@ -385,6 +404,7 @@ async function app() {
         }
         lastCheckElement.textContent = date;
         dst.classList.toggle("inop", !ok);
+        lastCheckElement.classList.toggle("text-danger", !ok);
     }
 
     function loading(element, isLoading){

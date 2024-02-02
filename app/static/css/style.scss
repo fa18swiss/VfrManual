@@ -1,4 +1,3 @@
-@use 'sass:color';
 $navbar-height: 56px;
 
 .dest{
@@ -20,6 +19,10 @@ $navbar-height: 56px;
 
 nav {
   height: $navbar-height;
+  .text-danger {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
 }
 .navbar-brand {
   margin: 0;
@@ -34,50 +37,17 @@ section {
 .btn span[role=status] {
   margin-right:3px;
 }
+.inopDescr {
+  display: none;
+  text-align: center;
+  font-size: 1.15em;
+}
 .inop {
-  $inop-color-1: red;
-  $inop-color-2: color.scale($inop-color-1, $lightness: 50%);
-  $inop-color-alpha: 0.5;
-  $inop-color-1: color.change($inop-color-1, $alpha: $inop-color-alpha);
-  $inop-color-2: color.change($inop-color-2, $alpha: $inop-color-alpha);
-  $inop-color-size: 5px;
-  $inop-text-color: #FFF;
-  $inop-text-border-color:#000;
-  $inop-text-border-size:1px;
-  @mixin fullSize {
-    display:table-cell;
-    position:absolute;
-    top:0;
-    bottom:0;
-    left: 0;
-    right: 0;
-  }
-  position:relative;
-  &::before {
-    @include fullSize;
-    content: " ";
-
-    z-index: 1000;
-    background: repeating-linear-gradient(
-                    -45deg,
-                    $inop-color-1,
-                    $inop-color-1 $inop-color-size,
-                    $inop-color-2 $inop-color-size,
-                    $inop-color-2 $inop-color-size * 2
-    );
-  }
-  &::after{
-    @include fullSize;
-    z-index: 1001;
-    color:white;
-    text-shadow: (-$inop-text-border-size) 0 $inop-text-border-color, 0 $inop-text-border-size $inop-text-border-color,
-                $inop-text-border-size 0 $inop-text-border-color, 0 (-$inop-text-border-size) $inop-text-border-color;
-    font-size: 40px;
-    font-weight: bold;
-    content:"INOP";
-    text-align: center;
+  .inopDescr{
+    display: block;
   }
 }
+
 @media  (max-width: 700px) {
   section {
     width:100%;

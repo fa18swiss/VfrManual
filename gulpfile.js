@@ -99,7 +99,7 @@ const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);
 const js = parallel(js_bootstrap, js_jquery);
-const build = series(parallel(css, js, svg), parallel(swJs, startSh));
+const build = series(parallel(css, js, svg), swJs);
 
 exports.default = series(clean, build);
 exports.build = build;

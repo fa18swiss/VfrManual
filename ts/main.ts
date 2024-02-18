@@ -1,5 +1,5 @@
 import {VfrSection} from "./components";
-import {AicATable, AicBTable, DabsTable, DatabaseName, VftTable} from "./constants";
+import {AicATable, AicBTable, DabsTable, VftTable} from "./constants";
 import {DabsDataManager} from "./Dabs";
 import {VfrManualDataManager} from "./VfrManual";
 import {BaseDataManager} from "./abstract";
@@ -14,7 +14,7 @@ async function app() {
     const sectionAicA : VfrSection = <VfrSection>document.getElementById("AicA");
     const sectionAicB : VfrSection = <VfrSection>document.getElementById("AicB");
 
-    const db = new DBWrapper(DatabaseName, 3, (e, d) => {
+    const db = new DBWrapper("App", 3, (e, d) => {
         if (e.oldVersion < 1) d.createObjectStore(VftTable);
         if (e.oldVersion < 2) d.createObjectStore(DabsTable);
         if (e.oldVersion < 3) {

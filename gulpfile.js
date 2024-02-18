@@ -123,7 +123,32 @@ function swJs() {
         .pipe(dest("app"))
 }
 
-const ts = series(ts_compile, ts_compress)
+const iconsList = {
+    "BiArchive": "archive",
+    "BiArrowRepeat": "arrow-repeat",
+    "BiCloud": "cloud",
+    "BiExclamationTriangleFill": "exclamation-triangle-fill",
+}
+
+function icons(cb) {
+    let content = '';
+    for (let key in iconsList){
+        if (!iconsList.hasOwnProperty(key)) continue;
+        let value = iconsList[key];
+        let svg = fs.readFileSync(`node_modules/bootstrap-icons/icons/${value}.svg`).toString()
+        svg = svg
+            .replaceAll('\n  ', '')
+            .replaceAll('\n', '')
+            .replaceAll('\r', '')
+            .replace('width="16"', 'width="1em"')
+            .replace('height="16"', 'height="1em"')
+        ;
+        content = `${content}export const ${key}: string = '${svg}';${EOL}`
+    }
+    fs.writeFile('ts/icons.ts', content, cb);
+}
+
+const ts = series(icons, ts_compile, ts_compress)
 const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);
@@ -134,6 +159,7 @@ exports.default = series(clean, build);
 exports.build = build;
 exports.clean = clean;
 exports.ts = ts;
+exports.icons = icons;
 exports.watch = _ => {
     watch(file_scss, scss);
     watch("ts/*.ts", ts);

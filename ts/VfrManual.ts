@@ -1,8 +1,9 @@
 import {ItemBase, BaseDataManager} from "./abstract"
 import {VfrSection} from "./components"
-import {DataKey, VftTable, BiArchive, BiCloud} from "./constants"
+import {DataKey, VftTable} from "./constants"
 import {get, getOrCreate, localeUpperCompare} from "./functions"
 import {DBWrapper} from "./db";
+import {BiArchive, BiCloud} from "./icons"
 
 class VfrManualItem extends ItemBase {
     date: string;

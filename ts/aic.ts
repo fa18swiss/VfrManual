@@ -1,7 +1,8 @@
 import {BaseDataManager, ItemBase} from "./abstract";
 import {DBTableWrapper, DBWrapper} from "./db";
 import {VfrSection} from "./components";
-import {AicATable, AicBTable, BiArchive, BiCloud, DataKey} from "./constants";
+import {AicATable, AicBTable, DataKey} from "./constants";
+import {BiArchive, BiCloud} from "./icons"
 import {get, getOrCreate, localeUpperCompare} from "./functions";
 
 class AicItem extends ItemBase {

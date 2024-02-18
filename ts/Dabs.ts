@@ -1,8 +1,9 @@
 import {ItemBase, BaseDataManager} from "./abstract"
 import {VfrSection} from "./components"
-import {DataKey, DabsTable, BiArchive, BiCloud} from "./constants"
+import {DataKey, DabsTable} from "./constants"
 import {get, getOrCreate, localeUpperCompare} from "./functions"
 import {DBWrapper} from "./db";
+import {BiArchive, BiCloud} from "./icons"
 
 class DabsItem extends ItemBase {
     date: string;

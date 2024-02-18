@@ -1,4 +1,4 @@
-import {BiExclamationTriangleFill} from "./constants"
+import {BiExclamationTriangleFill} from "./icons"
 
 export class VfrSection extends HTMLElement {
     private button: HTMLButtonElement;

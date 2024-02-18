@@ -1,7 +1,8 @@
 import {VfrSection} from "./components"
-import {BiArrowRepeat, DataKey} from "./constants"
+import {DataKey} from "./constants"
 import {getOrCreate} from "./functions"
 import {DBTableWrapper} from "./db";
+import {BiArrowRepeat} from "./icons";
 
 export class ItemBase {
     id: string;

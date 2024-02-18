@@ -8,3 +8,4 @@
 /app/static/svg
 *.tar
 *.gz
+/ts/icons.ts

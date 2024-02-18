@@ -40,6 +40,12 @@ function scss() {
         .pipe(dest(dir_css));
 }
 
+function ts_version() {
+    return src("ts/constants.ts")
+        .pipe(replace(/Version: string = \"([\d\.]+)\"/, `Version: string = "${package.version}"`))
+        .pipe(dest("ts"))
+}
+
 function ts_compile(){
     return browserify({
         basedir: "./ts",
@@ -148,7 +154,7 @@ function icons(cb) {
     fs.writeFile('ts/icons.ts', content, cb);
 }
 
-const ts = series(icons, ts_compile, ts_compress)
+const ts = series(parallel(icons, ts_version), ts_compile, ts_compress)
 const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);

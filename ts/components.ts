@@ -65,11 +65,11 @@ export class VfrSection extends HTMLElement {
             }
         }
     }
-    manageDate(lastCheck: string) {
+    manageDate(lastCheck: string, maxDiffHoursAllowed: number) {
         let ok: boolean, date: string;
         if (lastCheck) {
             const lastCheckDate: Date = new Date(lastCheck);
-            ok = (new Date().getTime() - lastCheckDate.getTime()) < (1 * 60 * 60 * 1000) // 1 jours
+            ok = (new Date().getTime() - lastCheckDate.getTime()) < (maxDiffHoursAllowed * 60 * 60 * 1000);
             date = lastCheckDate.toLocaleString();
         } else{
             ok = false;

@@ -61,12 +61,46 @@
       <li id="AicBTab" class="nav-item" role="presentation">
         <button class="nav-link" aria-selected="false" aria-controls="AicB" data-bs-target="#AicB" data-bs-toggle="tab" role="tab" type="button">AIC-B</button>
       </li>
+      <li id="InfosTab" class="nav-item" role="presentation">
+        <button class="nav-link" aria-selected="false" aria-controls="Infos" data-bs-target="#Infos" data-bs-toggle="tab" role="tab" type="button">Infos</button>
+      </li>
     </ul>
     <div class="tab-content">
       <vfr-section data-title="DABS" id="Dabs" aria-labelledby="AicATab" class="tab-pane fade show active"></vfr-section>
-      <vfr-section data-title="eVFR Manual (GEN)" id="VfrManual" aria-labelledby="VfrManualTab" class="tab-pane fade"></vfr-section>
+      <vfr-section data-title="VFR Manual" id="VfrManual" aria-labelledby="VfrManualTab" class="tab-pane fade"></vfr-section>
       <vfr-section data-title="AIC Series A" id="AicA" aria-labelledby="AicATab" class="tab-pane fade"></vfr-section>
       <vfr-section data-title="AIC Series B" id="AicB" aria-labelledby="AicBTab" class="tab-pane fade"></vfr-section>
+      <div id="Infos" aria-labelledby="InfosTab" class="tab-pane fade">
+        <div class="container mx-auto py-3">
+          <h1>Offline VFR information</h1>
+          <p>
+            This is a PWA working offline (<a href="https://developer.mozilla.org/en/docs/Web/Progressive_web_apps/Tutorials/js13kGames/Offline_Service_workers" target="_blank" rel="nofollow noreferrer">reference</a>)
+          </p>
+          <p>
+            Source of the data :
+            <ul>
+              <li>DABS : <a href="https://skybriefing.com/dabs" target="_blank" rel="nofollow noreferrer">https://skybriefing.com/dabs</a></li>
+              <li>Vfr Manual : <a href="https://skybriefing.com/web/guest/evfr-manual-gen" target="_blank" rel="nofollow noreferrer">https://skybriefing.com/web/guest/evfr-manual-gen</a></li>
+              <li>AIC A : <a href="https://skybriefing.com/web/guest/aic-series-a" target="_blank" rel="nofollow noreferrer">https://skybriefing.com/web/guest/aic-series-a</a></li>
+              <li>AIC B : <a href="https://skybriefing.com/web/guest/aic-series-b" target="_blank" rel="nofollow noreferrer">https://skybriefing.com/web/guest/aic-series-b</a></li>
+            </ul>
+          </p>
+
+          <h1>About</h1>
+          <div>
+            Author : <a href="https://github.com/fa18swiss/" target="_blank" rel="nofollow noreferrer">FA18Swiss</a>
+          </div>
+          <div>
+            License : <a href="https://github.com/fa18swiss/VfrManual/blob/master/LICENSE.md" target="_blank" rel="nofollow noreferrer">GNU GPL 3</a>
+          </div>
+          <div>
+            <a href="https://github.com/fa18swiss/VfrManual" target="_blank" rel="nofollow noreferrer">Source code</a>
+          </div>
+          <div>
+            Version : <span id="versionDst">N/A</span>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

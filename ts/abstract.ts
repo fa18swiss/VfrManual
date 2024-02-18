@@ -22,9 +22,11 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
     protected data: Data<RowType>;
     protected readonly section: VfrSection;
     protected readonly db: DBTableWrapper;
-    protected constructor(db: DBTableWrapper, section: VfrSection) {
+    private readonly maxDiffHoursAllowed: number;
+    protected constructor(db: DBTableWrapper, section: VfrSection, maxDiffHoursAllowed: number) {
         this.db = db;
         this.section = section;
+        this.maxDiffHoursAllowed = maxDiffHoursAllowed;
     }
 
     async load() {
@@ -50,7 +52,7 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
     protected abstract parse(id: string, item: any): RowType;
     public abstract refresh(save: boolean): Promise<void>;
     public manageDate() {
-        this.section.manageDate(this.data.LastCheck)
+        this.section.manageDate(this.data.LastCheck, this.maxDiffHoursAllowed)
     }
 
     protected manageItems(){

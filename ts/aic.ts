@@ -15,7 +15,7 @@ abstract class AicDataManager extends BaseDataManager<AicItem> {
     protected readonly urlPath: string;
 
     protected constructor(db: DBTableWrapper, section: VfrSection, urlPath: string) {
-        super(db, section);
+        super(db, section, 24);
         this.urlPath = urlPath;
     }
     protected parse(id: string, item: any): AicItem {

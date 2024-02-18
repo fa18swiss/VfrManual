@@ -8,6 +8,7 @@ import mimetypes
 __app = os.path.normpath(os.path.join(os.path.realpath(os.path.dirname(__file__))))
 __root = os.path.join(__app, "root.html")
 __sw = os.path.join(__app, "sw.js")
+__robots = os.path.join(__app, "robots.txt")
 __ico = os.path.join(__app, "static", "icon", "favicon.ico")
 
 mimetypes.add_type("application/javascript", ".js")
@@ -22,6 +23,9 @@ async def index():
 async def sw():
     return FileResponse(__sw)
 
+@app.get("/robots.txt")
+async def robots():
+    return FileResponse(__robots)
 
 @app.get("/favicon.ico")
 async def ico():

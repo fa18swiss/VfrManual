@@ -12,7 +12,7 @@ class VfrManualItem extends ItemBase {
 
 export class VfrManualDataManager extends BaseDataManager<VfrManualItem> {
     constructor(section: VfrSection, db: DBWrapper) {
-        super(db.table(VftTable), section);
+        super(db.table(VftTable), section, 48);
     }
 
     protected parse(id: string, item: any): VfrManualItem {

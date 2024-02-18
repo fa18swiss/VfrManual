@@ -12,7 +12,7 @@ class DabsItem extends ItemBase {
 
 export class DabsDataManager extends BaseDataManager<DabsItem> {
     constructor(section: VfrSection, db: DBWrapper) {
-        super(db.table(DabsTable), section);
+        super(db.table(DabsTable), section, 6);
     }
 
     protected parse(id: string, item: any): DabsItem {

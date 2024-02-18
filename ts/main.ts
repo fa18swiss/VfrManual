@@ -1,5 +1,5 @@
 import {VfrSection} from "./components";
-import {AicATable, AicBTable, DabsTable, VftTable} from "./constants";
+import {AicATable, AicBTable, DabsTable, Version, VftTable} from "./constants";
 import {DabsDataManager} from "./Dabs";
 import {VfrManualDataManager} from "./VfrManual";
 import {BaseDataManager} from "./abstract";
@@ -9,6 +9,8 @@ import {AicADataManager, AicBDataManager} from "./aic";
 customElements.define("vfr-section", VfrSection);
 
 async function app() {
+    document.getElementById("versionDst").innerText = Version;
+
     const sectionVfrManual : VfrSection = <VfrSection>document.getElementById("VfrManual");
     const sectionDabs : VfrSection = <VfrSection>document.getElementById("Dabs");
     const sectionAicA : VfrSection = <VfrSection>document.getElementById("AicA");

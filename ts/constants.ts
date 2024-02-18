@@ -3,3 +3,4 @@ export const DabsTable : string = "Dabs";
 export const AicATable : string = "AicA";
 export const AicBTable : string = "AicB";
 export const DataKey  : string= "Data";
+export const Version: string = "1.3.3";

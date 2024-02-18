@@ -1,0 +1,11 @@
+{
+  "files": [ "ts/main.ts" ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "removeComments": true,
+    "noEmitHelpers": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2020"
+  }
+}

@@ -27,6 +27,7 @@
         if (!('serviceWorker' in navigator)) return "No serviceWorker";
         if (!('indexedDB' in window)) return "No indexedDB";
         if (!('URL' in window)) return "No URL";
+        if (!('customElements' in window)) return "No customElements";
         if (typeof Symbol == "undefined") return "Not ES6 (Symbol)";
         return null;
       }
@@ -43,29 +44,29 @@
           });
       }
     </script>
-    <script src="static/app.js"></script>
+    <script src="static/js/app.min.js"></script>
     <link rel="stylesheet" href="static/css/style.min.css" />
   </head>
   <body>
-  <section>
-    <nav class="navbar navbar-light bg-light">
-      <div class="container-fluid">
-        <button class="btn btn-outline-success" type="button" id="cmdRefreshVfrManual">Refresh</button>
-        <span class="navbar-brand">VFR Manual</span>
-        <span class="navbar-brand right" id="lastCheckVfrManual"></span>
-      </div>
-    </nav>
-    <div class="list-group dest inop" id="destVfrManual"></div>
-  </section>
-  <section>
-    <nav class="navbar navbar-light bg-light">
-      <div class="container-fluid">
-        <button class="btn btn-outline-success" type="button" id="cmdRefreshDabs">Refresh</button>
-        <span class="navbar-brand">DABS</span>
-        <span class="navbar-brand right" id="lastCheckDabs"></span>
-      </div>
-    </nav>
-    <div class="list-group dest inop" id="destDabs"></div>
-  </section>
+    <ul class="nav nav-tabs nav-fill navbar-light bg-light" role="tablist">
+      <li id="DabsTab" class="nav-item active" role="presentation">
+        <button class="nav-link active" aria-selected="true" aria-controls="Dabs" data-bs-target="#Dabs" data-bs-toggle="tab" role="tab" type="button">DABS</button>
+      </li>
+      <li id="VfrManualTab" class="nav-item" role="presentation">
+        <button class="nav-link" aria-selected="false" aria-controls="VfrManual" data-bs-target="#VfrManual" data-bs-toggle="tab" role="tab" type="button">eVFR Manual (GEN)</button>
+      </li>
+      <li id="AicATab" class="nav-item" role="presentation">
+        <button class="nav-link" aria-selected="false" aria-controls="AicA" data-bs-target="#AicA" data-bs-toggle="tab" role="tab" type="button">AIC Series A</button>
+      </li>
+      <li id="AicBTab" class="nav-item" role="presentation">
+        <button class="nav-link" aria-selected="false" aria-controls="AicB" data-bs-target="#AicB" data-bs-toggle="tab" role="tab" type="button">AIC Series B</button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <vfr-section data-title="DABS" id="Dabs" aria-labelledby="AicATab" class="tab-pane fade show active"></vfr-section>
+      <vfr-section data-title="eVFR Manual (GEN)" id="VfrManual" aria-labelledby="VfrManualTab" class="tab-pane fade"></vfr-section>
+      <vfr-section data-title="AIC Series A" id="AicA" aria-labelledby="AicATab" class="tab-pane fade"></vfr-section>
+      <vfr-section data-title="AIC Series B" id="AicB" aria-labelledby="AicBTab" class="tab-pane fade"></vfr-section>
+    </div>
   </body>
 </html>

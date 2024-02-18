@@ -7,11 +7,23 @@ const removeSourcemaps = require("./gulp-remove-sourcemap");
 const fs = require("fs");
 const package = require("./package.json");
 const sass = require("gulp-sass")(require("sass"));
+const browserify = require("browserify");
+const source = require("vinyl-source-stream");
+const tsify = require("tsify");
+const uglify = require('gulp-uglify');
 
 const dir_css = "app/static/css/";
 const dir_js = "app/static/js/";
 const dir_svg = "app/static/svg/";
 const file_scss = dir_css + "style.scss"
+const file_name_app = "app.js";
+const file_app = dir_js+ file_name_app;
+
+function addMin() {
+    return rename(function (file) {
+        file.basename = file.basename + ".min";
+    })
+}
 
 
 function bootstrap_css() {
@@ -24,12 +36,28 @@ function scss() {
         .pipe(sass({
             outputStyle: "compressed",
         }).on("error", sass.logError))
-        .pipe(
-            rename(function (file) {
-                file.basename = file.basename + ".min";
-            })
-        )
+        .pipe(addMin())
         .pipe(dest(dir_css));
+}
+
+function ts_compile(){
+    return browserify({
+        basedir: "./ts",
+        debug: true,
+        entries: ["main.ts"],
+        cache: {},
+        packageCache: {},
+    })
+    .plugin(tsify)
+    .bundle()
+    .pipe(source(file_name_app))
+    .pipe(dest(dir_js));
+}
+function ts_compress (){
+    return src(file_app)
+        .pipe(uglify())
+        .pipe(addMin())
+        .pipe(dest(dir_js));
 }
 
 function js_bootstrap() {
@@ -60,7 +88,7 @@ function svg_flags_it() {
 function clean() {
     return del([
         dir_css + "*.min.css",
-        dir_js + "*.min.js",
+        dir_js + "*.js",
         dir_svg + "*.svg",
     ]);
 }
@@ -73,7 +101,7 @@ function readFiles(path, res) {
         let item = `${path}/${it.name}`
         if (it.isDirectory()){
             readFiles(item, res)
-        } else if (!item.endsWith(".scss")) {
+        } else if (!item.endsWith(".scss") && !item.endsWith(file_name_app)) {
             res.push(item)
         }
     }
@@ -95,13 +123,18 @@ function swJs() {
         .pipe(dest("app"))
 }
 
+const ts = series(ts_compile, ts_compress)
 const css = parallel(bootstrap_css, scss);
 const svg_flags = parallel(svg_flags_de, svg_flags_en, svg_flags_fr, svg_flags_it);
 const svg = parallel(svg_flags);
-const js = parallel(js_bootstrap, js_jquery);
+const js = parallel(js_bootstrap, js_jquery, ts);
 const build = series(parallel(css, js, svg), swJs);
 
 exports.default = series(clean, build);
 exports.build = build;
 exports.clean = clean;
-exports.watch = _ => watch(file_scss, scss)
+exports.ts = ts;
+exports.watch = _ => {
+    watch(file_scss, scss);
+    watch("ts/*.ts", ts);
+}

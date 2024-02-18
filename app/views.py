@@ -93,11 +93,14 @@ async def dabs_get_full_v1(date, version):
 
 @app.get("/v1/HealthCheck", response_class=PlainTextResponse)
 async def health_check_v1(response: Response):
+    ok = True
     vfr_manual.cleanup()
     dabs.cleanup()
-    vfr_manual_ok = vfr_manual.check()
-    dabs_ok = dabs.check()
-    if vfr_manual_ok and dabs_ok:
+    ok = vfr_manual.check() and ok
+    ok = dabs.check() and ok
+    ok = aic_a.check() and ok
+    ok = aic_b.check() and ok
+    if ok:
         return "Healthy"
     response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return "Unhealthy"
@@ -111,3 +114,37 @@ async def cleanup_v1():
         "DABS": dabs_data.last_cleanup(),
         "VfrManual": vfr_manual_data.last_cleanup()
     }
+
+
+@app.get("/v1/aic-a/all")
+async def aic_a_all_v1():
+    aic_a.check()
+    return {
+        "LastCheck": aic_a_data.last_check(),
+        "All": aic_a.data_file.all_sorted()
+    }
+
+
+@app.get("/v1/aic-a/get/{code:path}")
+async def aic_a_get_v1(code):
+    aic_a.check()
+    if not aic_a_data.contains(code):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return FileResponse(aic_a_data.path(code))
+
+
+@app.get("/v1/aic-b/all")
+async def aic_b_all_v1():
+    aic_b.check()
+    return {
+        "LastCheck": aic_b_data.last_check(),
+        "All": aic_b.data_file.all_sorted()
+    }
+
+
+@app.get("/v1/aic-b/get/{code:path}")
+async def aic_b_get_v1(code):
+    aic_b.check()
+    if not aic_b_data.contains(code):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return FileResponse(aic_b_data.path(code))

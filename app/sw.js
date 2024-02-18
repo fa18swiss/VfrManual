@@ -3,7 +3,6 @@ const cacheName = `vfrmanual-${version}`;
 
 const CACHE_URLS = [
     '/',
-    '/static/app.js',
     '/static/css/bootstrap.min.css',
     '/static/css/style.min.css',
     '/static/icon/android-chrome-192x192.png',
@@ -20,6 +19,7 @@ const CACHE_URLS = [
     '/static/icon/mstile-70x70.png',
     '/static/icon/safari-pinned-tab.svg',
     '/static/icon/site.webmanifest',
+    '/static/js/app.min.js',
     '/static/js/bootstrap.min.js',
     '/static/js/jquery.slim.min.js',
     '/static/svg/de.svg',

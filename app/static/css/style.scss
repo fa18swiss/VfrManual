@@ -1,7 +1,8 @@
+$nav-height: 42px;
 $navbar-height: 56px;
 
 .dest{
-  height: calc(100vh - $navbar-height);
+  height: calc(100vh -  ($nav-height + $navbar-height));
   overflow-y: scroll;
   a{
     svg  {
@@ -16,7 +17,9 @@ $navbar-height: 56px;
     }
   }
 }
-
+.nav {
+  height: $nav-height;
+}
 nav {
   height: $navbar-height;
   .text-danger {
@@ -30,10 +33,7 @@ nav {
 .navbar-brand.right {
   font-size: 15px;
 }
-section {
-  width:50%;
-  float:left;
-}
+
 .btn span[role=status] {
   margin-right:3px;
 }
@@ -48,15 +48,6 @@ section {
   }
 }
 
-@media  (max-width: 700px) {
-  section {
-    width:100%;
-    float:none;
-  }
-  .dest{
-    height: calc(50vh - $navbar-height);
-  }
-}
 @media  (max-width: 400px) {
   .navbar-brand {
     font-size: 1rem;

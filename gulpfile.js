@@ -159,6 +159,7 @@ exports.default = series(clean, build);
 exports.build = build;
 exports.clean = clean;
 exports.ts = ts;
+exports.scss = scss;
 exports.icons = icons;
 exports.watch = _ => {
     watch(file_scss, scss);

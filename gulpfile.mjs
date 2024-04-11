@@ -1,16 +1,19 @@
-const { src, dest, series, parallel, watch } = require("gulp");
-const del = require("del");
-const { EOL } = require("os");
-const rename = require("gulp-rename");
-const replace = require("gulp-replace");
-const removeSourcemaps = require("./gulp-remove-sourcemap");
-const fs = require("fs");
-const package = require("./package.json");
-const sass = require("gulp-sass")(require("sass"));
-const browserify = require("browserify");
-const source = require("vinyl-source-stream");
-const tsify = require("tsify");
-const uglify = require('gulp-uglify');
+import { src, dest, task, series, parallel, watch } from "gulp";
+import { deleteAsync } from "del";
+import { EOL } from "os";
+import rename from "gulp-rename";
+import replace from "gulp-replace";
+import removeSourcemaps from "./gulp-remove-sourcemap.js";
+import fs from "fs";
+import localPackage from "./package.json" assert { type: "json" };
+import * as dartSass from 'sass';
+import gulpSass from 'gulp-sass';
+import browserify from "browserify";
+import source from "vinyl-source-stream";
+import tsify from "tsify";
+import uglify from 'gulp-uglify';
+
+const sass = gulpSass(dartSass);
 
 const dir_css = "app/static/css/";
 const dir_js = "app/static/js/";
@@ -42,7 +45,7 @@ function scss() {
 
 function ts_version() {
     return src("ts/constants.ts")
-        .pipe(replace(/Version: string = \"([\d\.]+)\"/, `Version: string = "${package.version}"`))
+        .pipe(replace(/Version: string = \"([\d\.]+)\"/, `Version: string = "${localPackage.version}"`))
         .pipe(dest("ts"))
 }
 
@@ -92,7 +95,7 @@ function svg_flags_it() {
 }
 
 function clean() {
-    return del([
+    return deleteAsync([
         dir_css + "*.min.css",
         dir_js + "*.js",
         dir_svg + "*.svg",
@@ -125,7 +128,7 @@ function swJs() {
     res = `${res}${EOL}`
     return src("app/sw.js")
         .pipe(replace(/(const CACHE_URLS = \[)([\s\S]+)(\];)/, `$1${res}$3`))
-        .pipe(replace(/version = \"([\d\.]+)\"/, `version = "${package.version}"`))
+        .pipe(replace(/version = \"([\d\.]+)\"/, `version = "${localPackage.version}"`))
         .pipe(dest("app"))
 }
 
@@ -161,13 +164,13 @@ const svg = parallel(svg_flags);
 const js = parallel(js_bootstrap, js_jquery, ts);
 const build = series(parallel(css, js, svg), swJs);
 
-exports.default = series(clean, build);
-exports.build = build;
-exports.clean = clean;
-exports.ts = ts;
-exports.scss = scss;
-exports.icons = icons;
-exports.watch = _ => {
+task("default", series(clean, build));
+task(build);
+task(clean);
+task(ts)
+task(scss);
+task(icons);
+task("watch", _ => {
     watch(file_scss, scss);
     watch("ts/*.ts", ts);
-}
+});

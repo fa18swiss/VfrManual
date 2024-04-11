@@ -165,11 +165,11 @@ const js = parallel(js_bootstrap, js_jquery, ts);
 const build = series(parallel(css, js, svg), swJs);
 
 task("default", series(clean, build));
-task(build);
-task(clean);
-task(ts)
-task(scss);
-task(icons);
+task("build", build);
+task("clean", clean);
+task("ts", ts)
+task("scss", scss);
+task("icons", icons);
 task("watch", _ => {
     watch(file_scss, scss);
     watch("ts/*.ts", ts);

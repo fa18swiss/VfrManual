@@ -14,7 +14,7 @@
     "gulp-sass": "^5.1.0",
     "gulp-uglify": "^3.0.2",
     "jquery": "^3.7.1",
-    "sass": "^1.74.1",
+    "sass": "^1.77.2",
     "svg-country-flags": "^1.2.10",
     "tsify": "^5.0.4",
     "typescript": "^5.4.5",

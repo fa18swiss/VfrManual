@@ -28,7 +28,7 @@
         if (!('indexedDB' in window)) return "No indexedDB";
         if (!('URL' in window)) return "No URL";
         if (!('customElements' in window)) return "No customElements";
-        if (typeof Symbol == "undefined") return "Not ES6 (Symbol)";
+        if (typeof Array.prototype.findLast !== "function") return "Not ES2023 (Array.findLast)";
         return null;
       }
       var res = check();

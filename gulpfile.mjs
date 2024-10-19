@@ -5,7 +5,7 @@ import rename from "gulp-rename";
 import replace from "gulp-replace";
 import removeSourcemaps from "./gulp-remove-sourcemap.js";
 import fs from "fs";
-import localPackage from "./package.json" assert { type: "json" };
+import localPackage from "./package.json" with { type: "json" };
 import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import browserify from "browserify";

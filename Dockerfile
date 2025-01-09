@@ -1,10 +1,10 @@
-FROM python:3.12.2-alpine
+FROM python:3.13.1-alpine
 EXPOSE 80/tcp
 
 RUN apk --no-cache add curl
 
 COPY ./requirements.txt /tmp/
-RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 COPY app/ /app/app/
 COPY log_config.json /app/

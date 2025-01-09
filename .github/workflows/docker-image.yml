@@ -33,7 +33,8 @@ jobs:
         exit 1
 
     - name: Install dependencies with Yarn and Gulp
-      run: | 
+      run: |
+        corepack enable
         yarn install
         gulp clean
         gulp build

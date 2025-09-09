@@ -4,7 +4,7 @@
   "main": "main.py",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "bootstrap": "^5.3.7",
+    "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "browserify": "^17.0.1",
     "del": "^8.0.0",
@@ -14,10 +14,10 @@
     "gulp-sass": "^6.0.1",
     "gulp-uglify": "^3.0.2",
     "jquery": "^3.7.1",
-    "sass": "^1.89.2",
+    "sass": "^1.92.1",
     "svg-country-flags": "^1.2.10",
     "tsify": "^5.0.4",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "vinyl-source-stream": "^2.0.0"
   },
   "resolutions": {

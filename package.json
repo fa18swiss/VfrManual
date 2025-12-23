@@ -1,6 +1,6 @@
 {
   "name": "VfrManualApi",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "main": "main.py",
   "license": "GPL-3.0-only",
   "dependencies": {

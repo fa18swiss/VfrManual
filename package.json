@@ -7,21 +7,21 @@
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "browserify": "^17.0.1",
-    "del": "^8.0.0",
+    "del": "^8.0.1",
     "gulp": "^5.0.1",
     "gulp-rename": "^2.1.0",
     "gulp-replace": "^1.1.4",
     "gulp-sass": "^6.0.1",
     "gulp-uglify": "^3.0.2",
     "jquery": "^3.7.1",
-    "sass": "^1.92.1",
+    "sass": "^1.97.1",
     "svg-country-flags": "^1.2.10",
     "tsify": "^5.0.4",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vinyl-source-stream": "^2.0.0"
   },
   "resolutions": {
     "elliptic": "^6.6.1"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.12.0"
 }

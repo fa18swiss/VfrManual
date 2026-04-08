@@ -6,9 +6,9 @@ import {BiArchive, BiCloud} from "./icons"
 import {get, getOrCreate, localeUpperCompare} from "./functions";
 
 class AicItem extends ItemBase {
-    lang: string;
-    code: string;
-    text: string;
+    lang: string = "";
+    code: string = "";
+    text: string = "";
 }
 
 abstract class AicDataManager extends BaseDataManager<AicItem> {
@@ -67,8 +67,8 @@ abstract class AicDataManager extends BaseDataManager<AicItem> {
 
     protected sort(a: HTMLElement, b: HTMLElement): number {
         return -localeUpperCompare(
-            a.getAttribute("data-id"),
-            b.getAttribute("data-id"));
+            a.getAttribute("data-id")!,
+            b.getAttribute("data-id")!);
     }
     protected async downloadIfNeeded(item: AicItem): Promise<boolean> {
         let needed: boolean = await this.db.containsKey(item.id);

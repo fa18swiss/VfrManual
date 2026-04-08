@@ -9,7 +9,7 @@ import {AicADataManager, AicBDataManager} from "./aic";
 customElements.define("vfr-section", VfrSection);
 
 async function app() {
-    document.getElementById("versionDst").innerText = Version;
+    document.getElementById("versionDst")!.innerText = Version;
 
     const sectionVfrManual : VfrSection = <VfrSection>document.getElementById("VfrManual");
     const sectionDabs : VfrSection = <VfrSection>document.getElementById("Dabs");

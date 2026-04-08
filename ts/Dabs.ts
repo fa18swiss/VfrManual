@@ -6,8 +6,8 @@ import {DBWrapper} from "./db";
 import {BiArchive, BiCloud} from "./icons"
 
 class DabsItem extends ItemBase {
-    date: string;
-    version: number;
+    date: string = "";
+    version: number = 0;
 }
 
 export class DabsDataManager extends BaseDataManager<DabsItem> {
@@ -64,11 +64,11 @@ export class DabsDataManager extends BaseDataManager<DabsItem> {
 
     protected sort(a: HTMLElement, b: HTMLElement): number {
         const comp = localeUpperCompare(
-            a.getAttribute("data-date"),
-            b.getAttribute("data-date"));
+            a.getAttribute("data-date")!,
+            b.getAttribute("data-date")!);
         if (comp !== 0) return -comp;
-        return parseInt(b.getAttribute("data-version"), 10) -
-            parseInt(a.getAttribute("data-version"), 10);
+        return parseInt(b.getAttribute("data-version")!, 10) -
+            parseInt(a.getAttribute("data-version")!, 10);
     }
 
     protected async downloadIfNeeded(item: DabsItem): Promise<boolean> {

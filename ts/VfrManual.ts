@@ -6,8 +6,8 @@ import {DBWrapper} from "./db";
 import {BiArchive, BiCloud} from "./icons"
 
 class VfrManualItem extends ItemBase {
-    date: string;
-    lang: string;
+    date: string = "";
+    lang: string = "";
 }
 
 export class VfrManualDataManager extends BaseDataManager<VfrManualItem> {
@@ -67,12 +67,12 @@ export class VfrManualDataManager extends BaseDataManager<VfrManualItem> {
 
     protected sort(a: HTMLElement, b: HTMLElement): number {
         const comp = localeUpperCompare(
-            a.getAttribute("data-date"),
-            b.getAttribute("data-date"));
+            a.getAttribute("data-date")!,
+            b.getAttribute("data-date")!);
         if (comp !== 0) return -comp;
         return localeUpperCompare(
-            a.getAttribute("data-lang"),
-            b.getAttribute("data-lang"));
+            a.getAttribute("data-lang")!,
+            b.getAttribute("data-lang")!);
     }
 
     protected async downloadIfNeeded(item: VfrManualItem): Promise<boolean> {

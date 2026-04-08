@@ -16,7 +16,7 @@ class Dabs:
         "https://www.skybriefing.com/o/dabs?tomorrow",
     )
     __regex_date = re.compile("DABS Date: (20\\d{2}) ([A-Z]{3}) (\\d{1,2})")
-    __regex_version = re.compile(r"Version ([1-4]) -")
+    __regex_version = re.compile(r"Version ([1-6]) -")
     __months = ("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
     data_file: DataFile
     __logger: logging.Logger

@@ -5,21 +5,21 @@ import {DBTableWrapper} from "./db";
 import {BiArrowRepeat} from "./icons";
 
 export class ItemBase {
-    id: string;
+    id: string = "";
     downloading: boolean = false;
     hasFile: boolean = false;
 }
 
 export class Data<RowType> {
     items: { [key: string]: RowType };
-    LastCheck: string;
+    LastCheck: string | null = null;
     constructor() {
         this.items = {};
     }
 }
 
 export abstract class BaseDataManager<RowType extends ItemBase> {
-    protected data: Data<RowType>;
+    protected data: Data<RowType> = null!;
     protected readonly section: VfrSection;
     protected readonly db: DBTableWrapper;
     private readonly maxDiffHoursAllowed: number;
@@ -52,7 +52,7 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
     protected abstract parse(id: string, item: any): RowType;
     public abstract refresh(save: boolean): Promise<void>;
     public manageDate() {
-        this.section.manageDate(this.data.LastCheck, this.maxDiffHoursAllowed)
+        this.section.manageDate(this.data?.LastCheck, this.maxDiffHoursAllowed)
     }
 
     protected manageItems(){
@@ -60,8 +60,8 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
         let listItems: HTMLElement[] = [];
         let toRemove: HTMLElement[] = [];
         for (let i = 0; i < divs.length; i++) {
-            const item = divs.item(i);
-            const itemId: string = item.getAttribute("data-id");
+            const item = divs.item(i)!;
+            const itemId: string = item.getAttribute("data-id")!;
             if (itemId === "inop") continue;
             if (itemId in this.data.items) {
                 listItems.push(item);
@@ -71,9 +71,7 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
         }
         for (let i = 0; i < toRemove.length; i++) {
             toRemove[i].remove();
-            toRemove[i] = null;
         }
-        toRemove = null;
         listItems.sort(this.sort);
         for (let i = 0; i < listItems.length; i++) {
             this.section.dest.appendChild(listItems[i]);
@@ -86,7 +84,7 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
         let loopCount: number = 0
         while (true){
             if (target.tagName === "A") return <HTMLLinkElement>target;
-            target = target.parentElement;
+            target = target.parentElement!;
             loopCount++;
             if (loopCount > 10) throw "Too many loop count";
         }
@@ -98,7 +96,7 @@ export abstract class BaseDataManager<RowType extends ItemBase> {
         if (!link.href.endsWith("#")) return true;
         e.preventDefault();
 
-        const id = link.getAttribute("data-id");
+        const id = link.getAttribute("data-id")!;
         const item = this.data.items[id];
         if (item.downloading) return false;
         item.downloading = true;

@@ -9,7 +9,7 @@ export class DBWrapper {
     private readonly databaseName: string;
     private readonly version: number;
     private readonly onUpgradeNeeded: (event: IDBVersionChangeEvent, db: IDBDatabase) => void;
-    private db : IDBDatabase
+    private db : IDBDatabase | null
 
     constructor(databaseName: string, version: number, onUpgradeNeeded: (event: IDBVersionChangeEvent, db: IDBDatabase) => void) {
         this.databaseName = databaseName;

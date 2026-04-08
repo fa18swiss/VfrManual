@@ -1,9 +1,9 @@
 import {BiExclamationTriangleFill} from "./icons"
 
 export class VfrSection extends HTMLElement {
-    private button: HTMLButtonElement;
-    private lastCheck: HTMLSpanElement;
-    public dest: HTMLDivElement;
+    private button: HTMLButtonElement = null!;
+    private lastCheck: HTMLSpanElement = null!;
+    public dest: HTMLDivElement = null!;
     public static readonly RefreshClick: string = "refresh-click"
 
     connectedCallback(){
@@ -27,7 +27,7 @@ export class VfrSection extends HTMLElement {
         const title = document.createElement("span");
         container.appendChild(title)
         title.setAttribute("class", "navbar-brand")
-        title.innerText = this.getAttribute("data-title")
+        title.innerText = this.getAttribute("data-title")!
 
         this.lastCheck = document.createElement("span");
         container.appendChild(this.lastCheck)
@@ -65,7 +65,7 @@ export class VfrSection extends HTMLElement {
             }
         }
     }
-    manageDate(lastCheck: string, maxDiffHoursAllowed: number) {
+    manageDate(lastCheck: string | null | undefined, maxDiffHoursAllowed: number) {
         let ok: boolean, date: string;
         if (lastCheck) {
             const lastCheckDate: Date = new Date(lastCheck);

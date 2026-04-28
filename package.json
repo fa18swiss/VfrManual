@@ -17,7 +17,7 @@
     "sass": "^1.99.0",
     "svg-country-flags": "^1.2.10",
     "tsify": "^5.0.4",
-    "typescript": "^6.0.2",
+    "typescript": "^6.0.3",
     "vinyl-source-stream": "^2.0.0"
   },
   "resolutions": {
